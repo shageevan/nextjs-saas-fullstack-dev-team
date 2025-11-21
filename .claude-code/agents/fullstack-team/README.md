@@ -130,11 +130,16 @@ A complete AI-powered development team for building modern Next.js SaaS applicat
 
 ### Claude Code ✅
 Native support with full agent coordination, role enforcement, and skills management.
+- ✅ **MCP Support:** Native Model Context Protocol integration
+- ✅ **Direct Operations:** Database queries, Git operations, cache management
 
-### Cursor ✅
+### Cursor 2.1+ ✅
 Integrated via `.cursorrules` file and `@` file mentions. See `CURSOR-INTEGRATION.md` for details.
+- ✅ **MCP Support:** Native Model Context Protocol integration (v2.1+)
+- ✅ **Direct Operations:** Same MCP capabilities as Claude Code
+- ✅ **Real-time Editing:** Live suggestions and code completion
 
-**Both IDEs** can leverage the full team, with Claude Code providing tighter integration and Cursor offering real-time editing suggestions.
+**Both IDEs** have identical MCP capabilities for direct tool operations. Configure MCPs once, use in both. See `MCP-SETUP.md` for installation.
 
 ## Quick Start
 

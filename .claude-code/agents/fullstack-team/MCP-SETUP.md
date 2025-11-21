@@ -1,12 +1,23 @@
 # MCP Server Setup Guide
 
-Model Context Protocol (MCP) servers enhance Claude Code with direct access to tools and services. This guide covers installing and configuring MCPs for the Fullstack AI Tech Team.
+Model Context Protocol (MCP) servers enhance **both Claude Code and Cursor 2.1+** with direct access to tools and services. This guide covers installing and configuring MCPs for the Fullstack AI Tech Team.
 
 ## Quick Start
 
-MCP servers are configured in Claude Code's settings file. Each server runs as a separate process and communicates with Claude Code via stdio.
+MCP servers are configured in your IDE's settings file. Each server runs as a separate process and communicates via stdio.
 
-**Location:** `.claude-code/mcp_settings.json` (project-level) or global Claude Code settings
+### Configuration Locations
+
+**Claude Code:**
+- Project-level: `.claude-code/mcp_settings.json`
+- Global: Claude Code settings
+
+**Cursor 2.1+:**
+- Settings → Features → Model Context Protocol
+- Or: `.cursor/mcp_config.json` (project-level)
+- Or: `~/.cursor/mcp_config.json` (global)
+
+Both IDEs use the same MCP server format and configuration.
 
 ## Required MCP Servers
 
@@ -314,18 +325,110 @@ REDIS_URL=redis://localhost:6379
 
 ---
 
+## Cursor 2.1+ Configuration
+
+Cursor 2.1+ has native MCP support. Configuration is identical to Claude Code.
+
+### Method 1: Via Settings UI (Recommended)
+
+1. Open Cursor Settings (Cmd/Ctrl + ,)
+2. Search for "Model Context Protocol" or "MCP"
+3. Click "Edit in settings.json"
+4. Add your MCP servers using the same format as above
+
+### Method 2: Project-Level Config File
+
+**File:** `.cursor/mcp_config.json` (create in project root)
+
+```json
+{
+  "mcpServers": {
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "${DATABASE_URL}"
+      ]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "stripe": {
+      "command": "npx",
+      "args": ["-y", "stripe-mcp-server"],
+      "env": {
+        "STRIPE_API_KEY": "${STRIPE_API_KEY}"
+      }
+    },
+    "docker": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-docker"]
+    },
+    "redis": {
+      "command": "npx",
+      "args": ["-y", "redis-mcp-server"],
+      "env": {
+        "REDIS_URL": "${REDIS_URL}"
+      }
+    }
+  }
+}
+```
+
+### Method 3: Global Config
+
+**File:** `~/.cursor/mcp_config.json` (user home directory)
+
+Use same format as above. Global config applies to all projects.
+
+### Environment Variables in Cursor
+
+Cursor reads environment variables from:
+1. `.env.local` (project root)
+2. `.env` (project root)
+3. System environment variables
+
+Same `.env.local` file works for both Claude Code and Cursor.
+
+### Verifying MCP in Cursor
+
+1. Open Cursor
+2. Look for MCP indicator in status bar (bottom right)
+3. Click to see connected MCP servers
+4. Green checkmarks = servers running successfully
+
+Or ask Cursor directly:
+```
+"What MCP servers are currently connected?"
+```
+
+---
+
 ## Verification
 
-After configuring MCP servers, verify they're working:
+After configuring MCP servers, verify they're working in your IDE:
 
-### 1. Check MCP Status in Claude Code
+### 1. Check MCP Status
 
-Open Claude Code and look for MCP server status indicators. You should see:
-- ✅ Green checkmarks for running servers
-- ⚠️ Warnings for misconfigured servers
-- ❌ Errors for failed servers
+**Claude Code:**
+- Look for MCP server status indicators
+- ✅ Green checkmarks = running servers
+- ⚠️ Warnings = misconfigured servers
+- ❌ Errors = failed servers
+
+**Cursor 2.1+:**
+- Check MCP indicator in status bar (bottom right)
+- Click to see list of connected servers
+- Green checkmarks = servers running successfully
 
 ### 2. Test Each Server
+
+Test in either IDE by asking the AI:
 
 **PostgreSQL:**
 ```

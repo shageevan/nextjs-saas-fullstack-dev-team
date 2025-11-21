@@ -313,13 +313,63 @@ Finally, Sam (Frontend) build the UI."
 
 ## Key Differences: Claude Code vs Cursor
 
-| Feature | Claude Code | Cursor |
-|---------|-------------|--------|
+| Feature | Claude Code | Cursor 2.1+ |
+|---------|-------------|-------------|
 | Agent Loading | Automatic via agent files | Via .cursorrules + @ mentions |
 | Context Management | 3-tier loading system | Manual file references |
 | Team Coordination | Orchestrator built-in | You coordinate via prompts |
 | Skills Loading | Automatic index search | Manual file references |
 | Role Enforcement | Strict automatic | Via .cursorrules guidance |
+| **MCP Support** | ✅ Native | ✅ Native (v2.1+) |
+| **Direct Operations** | ✅ Yes | ✅ Yes |
+
+## MCP Support in Cursor 2.1+
+
+Cursor 2.1+ has native Model Context Protocol support, enabling direct tool operations just like Claude Code.
+
+### Setting Up MCPs in Cursor
+
+1. **Open Settings** (Cmd/Ctrl + ,)
+2. **Search for "MCP"** or "Model Context Protocol"
+3. **Configure servers** using `.cursor/mcp_config.json` or Settings UI
+4. **Use same configuration** as Claude Code (identical format)
+
+See `MCP-SETUP.md` for complete configuration guide.
+
+### Using MCPs in Cursor
+
+Once configured, Cursor agents can perform direct operations:
+
+**Example - Database Operations:**
+```
+You: "Show me the users table schema"
+Cursor (via PostgreSQL MCP):
+→ Executes: SELECT * FROM information_schema.columns WHERE table_name = 'users'
+→ Returns actual schema instantly
+```
+
+**Example - GitHub Operations:**
+```
+You: "Create a PR for this branch"
+Cursor (via GitHub MCP):
+→ Executes: gh pr create --title "..." --body "..."
+→ Returns PR URL
+```
+
+**Example - Cache Operations:**
+```
+You: "What cache keys exist for tenant abc123?"
+Cursor (via Redis MCP):
+→ Executes: KEYS tenant:abc123:*
+→ Returns list of cache keys
+```
+
+### Benefits of MCP in Cursor
+
+- ✅ **Direct operations** - No need to copy/paste commands
+- ✅ **Real-time data** - See actual state, not examples
+- ✅ **Faster workflow** - No context switching to terminal
+- ✅ **Same as Claude Code** - Identical capabilities
 
 ## Making the Most of Both
 
@@ -334,10 +384,11 @@ Finally, Sam (Frontend) build the UI."
 - Quick implementations
 - Code editing and refactoring
 - Real-time suggestions
+- **Direct tool operations via MCP**
 
 ### Best Workflow:
 1. **Plan with Claude Code** (load orchestrator, coordinate team)
-2. **Implement with Cursor** (follow patterns from .cursorrules)
+2. **Implement with Cursor** (follow patterns, use MCPs for operations)
 3. **Refine with Claude Code** (complex multi-agent tasks)
 
 ## Resources
@@ -349,10 +400,19 @@ Finally, Sam (Frontend) build the UI."
 
 ## Summary
 
-The Fullstack AI Tech Team integrates with Cursor through:
+The Fullstack AI Tech Team integrates with Cursor 2.1+ through:
 1. ✅ `.cursorrules` file (automatic context loading)
 2. ✅ `@` file mentions (explicit agent loading)
 3. ✅ Skills folder (pattern reference library)
 4. ✅ Documentation (comprehensive guides)
+5. ✅ **MCP servers** (direct tool operations - native in v2.1+)
 
-**You now have the full team available in both Claude Code and Cursor!** 🎉
+**You now have the full team available in both Claude Code and Cursor with identical MCP capabilities!** 🎉
+
+### MCP Setup
+See `MCP-SETUP.md` for configuring 5 essential MCP servers:
+- PostgreSQL (database operations)
+- GitHub (repository management)
+- Docker (container operations)
+- Stripe CLI (payment testing)
+- Redis (caching and rate limiting)
