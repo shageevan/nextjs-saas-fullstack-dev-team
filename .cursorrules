@@ -1,0 +1,286 @@
+# Fullstack AI Tech Team - Cursor Integration
+
+You are working with a complete AI-powered Fullstack development team located in `.claude-code/agents/fullstack-team/`.
+
+## Team Overview
+
+This project uses a specialized AI agent team for building Next.js SaaS applications. The team consists of 12 expert agents with strict role boundaries and API-first architecture principles.
+
+## Core Principles (ALWAYS FOLLOW)
+
+1. **API-FIRST Architecture** - Design and build secure APIs before UI implementation
+2. **Multi-Tenant by Default** - All applications include tenant isolation at database and API level
+3. **Security First** - OWASP Top 10, RBAC, authentication on all endpoints
+4. **Role Boundaries** - Each agent does ONLY their job, handoffs are mandatory
+5. **Context Optimization** - Load only what's needed (see context-manifest.yaml)
+
+## Available Agents
+
+### 🎯 Orchestrator (Kai)
+- **File**: `.claude-code/agents/fullstack-team/agents/orchestrator/core.yaml`
+- **Role**: Coordinates entire team, enforces role boundaries, manages parallel execution
+- **When to use**: Starting new projects, complex features requiring multiple specialists
+
+### 💻 Backend Developer (Morgan)
+- **File**: `.claude-code/agents/fullstack-team/agents/backend.agent.yaml`
+- **Role**: Server Actions, API routes, business logic, API authentication
+- **Expertise**: Next.js Server Actions, API versioning, rate limiting, multi-tenant isolation
+- **API-First Focus**: Designs RESTful APIs, implements authentication (API keys/OAuth/JWT), rate limiting
+
+### 🎨 Frontend Developer (Sam)
+- **File**: `.claude-code/agents/fullstack-team/agents/frontend.agent.yaml`
+- **Role**: Next.js UI, Shadcn components, Server Components, client state
+- **Never does**: Server Actions, API routes, database queries, business logic
+
+### 🗄️ Database Architect (Taylor)
+- **File**: `.claude-code/agents/fullstack-team/agents/database.agent.yaml`
+- **Role**: Multi-tenant schema design, Prisma/Drizzle ORM, query optimization
+- **Critical**: ALWAYS include tenantId in queries
+
+### 🏗️ Technical Architect (Jordan)
+- **File**: `.claude-code/agents/fullstack-team/agents/architect.agent.yaml`
+- **Role**: System architecture, API design, technology decisions, ADRs
+- **API-First Focus**: Defines API contracts, versioning strategy, authentication approach
+
+### 🔒 Security Expert (Riley)
+- **File**: `.claude-code/agents/fullstack-team/agents/security.agent.yaml`
+- **Role**: Authentication, authorization, OWASP Top 10, API security
+- **API Security**: Secures all external APIs, implements rate limiting, CORS policies
+
+### 💳 Payment Specialist (Avery)
+- **File**: `.claude-code/agents/fullstack-team/agents/payment.agent.yaml`
+- **Role**: Stripe integration, webhooks, subscriptions, billing
+
+### 🧪 QA Engineer (Quinn)
+- **File**: `.claude-code/agents/fullstack-team/agents/qa.agent.yaml`
+- **Role**: Unit tests (Vitest), integration tests, E2E (Playwright)
+
+### 🚀 DevOps Engineer (Casey)
+- **File**: `.claude-code/agents/fullstack-team/agents/devops.agent.yaml`
+- **Role**: Docker, Kubernetes, CI/CD, deployments
+
+### 📋 Product Manager (Alex)
+- **File**: `.claude-code/agents/fullstack-team/agents/pm.agent.yaml`
+- **Role**: Requirements, PRDs, user stories
+
+### 🎨 UI/UX Designer (Drew)
+- **File**: `.claude-code/agents/fullstack-team/agents/designer.agent.yaml`
+- **Role**: User flows, Shadcn customization, accessibility (WCAG 2.1 AA)
+
+### ✅ Resource Verifier (Reese)
+- **File**: `.claude-code/agents/fullstack-team/agents/resource-verifier.agent.yaml`
+- **Role**: Prerequisites verification, MCP servers, environment variables
+
+## Skills Knowledge Base
+
+Before implementing anything, check the skills folder first:
+- **Location**: `.claude-code/agents/fullstack-team/skills/`
+- **Index**: `skills/index.yaml` (28 curated skills)
+
+### Skill Categories
+- `frameworks/` - Next.js, React, TypeScript
+- `libraries/` - Shadcn UI, Prisma, Stripe, Zod, NextAuth
+- `patterns/` - Server Actions, API-first, multi-tenant, RBAC
+- `tools/` - Docker, Kubernetes, Playwright, Vitest
+- `best-practices/` - Security, performance, accessibility
+
+### Using Skills
+1. Search `skills/index.yaml` for relevant skill
+2. Load specific skill file (e.g., `skills/patterns/api-first-architecture.md`)
+3. If skill doesn't exist, create it following `skills/SKILL-TEMPLATE.md`
+
+## Workflow for New Features
+
+### Step 1: Resource Verification
+Always start by verifying prerequisites:
+- Database connection available?
+- Required MCP servers configured?
+- Environment variables set?
+- NPM packages installed?
+
+### Step 2: Architecture Review
+For complex features, consult Technical Architect (Jordan):
+- System design
+- API contracts
+- Technology choices
+- Multi-tenant strategy
+
+### Step 3: Implementation (Parallel)
+**Backend (Morgan):**
+- Design API endpoints first (RESTful, versioned)
+- Implement authentication and rate limiting
+- Server Actions for mutations
+- Database queries with tenant isolation
+
+**Frontend (Sam):**
+- Build UI components (Shadcn)
+- Server Components for data fetching
+- Client components for interactivity
+- Call Backend's Server Actions
+
+**Database (Taylor):**
+- Design schema with multi-tenancy
+- Create migrations
+- Optimize queries
+
+**Security (Riley):**
+- Review authentication flow
+- Audit API security
+- Implement RBAC
+- Rate limiting review
+
+### Step 4: Testing & Deployment
+**QA (Quinn):** Unit, integration, E2E tests
+**DevOps (Casey):** Deploy to staging/production
+
+## API-First Architecture (CRITICAL)
+
+ALL applications must be built API-first:
+
+### Required for Every API Endpoint
+✅ **Authentication** - API keys, OAuth 2.0, or JWT
+✅ **Versioning** - `/api/v1/`, `/api/v2/`
+✅ **Rate Limiting** - Prevent abuse
+✅ **Tenant Isolation** - Multi-tenant security
+✅ **Documentation** - OpenAPI/Swagger
+✅ **Error Handling** - Proper HTTP status codes
+✅ **CORS** - Cross-origin configuration
+
+### API Route Pattern
+```typescript
+// app/api/v1/users/route.ts
+import { verifyApiKey, checkRateLimit } from '@/lib/api-auth'
+
+export async function GET(request: NextRequest) {
+  // 1. Authenticate
+  const tenant = await verifyApiKey(request.headers.get('x-api-key'))
+  if (!tenant) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
+  // 2. Rate limit
+  const rateLimit = await checkRateLimit(tenant.id)
+  if (!rateLimit.allowed) {
+    return Response.json({ error: 'Rate limit exceeded' }, { status: 429 })
+  }
+
+  // 3. Query with tenant isolation
+  const users = await db.user.findMany({
+    where: { tenantId: tenant.id }
+  })
+
+  return Response.json({ data: users })
+}
+```
+
+## Multi-Tenant Requirements (CRITICAL)
+
+ALWAYS include tenantId in queries:
+
+```typescript
+// ✅ GOOD
+const users = await db.user.findMany({
+  where: { tenantId: tenant.id }
+})
+
+// ❌ BAD - Data leak!
+const users = await db.user.findMany()
+```
+
+## Code Quality Standards
+
+### Validation
+✅ Always validate with Zod
+```typescript
+const schema = z.object({
+  email: z.string().email(),
+  name: z.string().min(1),
+})
+const result = schema.safeParse(data)
+```
+
+### Error Handling
+✅ Structured responses
+```typescript
+// Success
+return { success: true, data: {...} }
+
+// Error
+return { error: 'User-friendly message', code: 'ERROR_CODE' }
+```
+
+### Server Actions
+✅ Use for mutations only
+```typescript
+'use server'
+export async function createItem(formData: FormData) {
+  const user = await requireAuth()
+  const tenant = await getCurrentTenant()
+
+  const parsed = schema.safeParse({...})
+  if (!parsed.success) return { error: 'Invalid input' }
+
+  const item = await db.item.create({
+    data: { ...parsed.data, tenantId: tenant.id }
+  })
+
+  revalidatePath('/items')
+  return { success: true, data: item }
+}
+```
+
+## Documentation References
+
+- **README**: `.claude-code/agents/fullstack-team/README.md`
+- **Context Optimization**: `.claude-code/agents/fullstack-team/OPTIMIZATION-SUMMARY.md`
+- **Role Boundaries**: `.claude-code/agents/fullstack-team/docs/ROLE-BOUNDARIES.md`
+- **Parallel Execution**: `.claude-code/agents/fullstack-team/docs/PARALLEL-EXECUTION.md`
+- **Skills Guide**: `.claude-code/agents/fullstack-team/skills/README.md`
+
+## Tech Stack
+
+- **Framework**: Next.js 15+ (App Router)
+- **UI**: Shadcn UI + Tailwind CSS + Radix UI
+- **Language**: TypeScript
+- **Database**: PostgreSQL
+- **ORM**: Prisma or Drizzle
+- **Cache**: Redis (Upstash)
+- **Auth**: NextAuth.js / Clerk / Auth.js
+- **Payments**: Stripe
+- **Testing**: Vitest + Playwright
+- **Deployment**: Vercel / Docker + Kubernetes
+
+## How to Use This Team
+
+### Option 1: Request Specific Agent
+"I need Morgan (Backend Developer) to implement a user management API with authentication and rate limiting."
+
+### Option 2: Request Team Coordination
+"I need the team to build a subscription billing feature with Stripe."
+(Orchestrator will coordinate: Architect → Backend → Frontend → Security → Payment → QA → DevOps)
+
+### Option 3: Check Skills First
+"Check skills/patterns/api-first-architecture.md for API design patterns."
+
+## Important Rules
+
+1. **Never skip authentication** on API endpoints
+2. **Always include tenantId** in database queries
+3. **Always validate input** with Zod
+4. **API versioning required** for external APIs
+5. **Rate limiting required** for all public APIs
+6. **Document APIs** with OpenAPI/Swagger
+7. **Test everything** - unit, integration, E2E
+8. **Security review required** for auth and payments
+
+## When in Doubt
+
+1. Check the skills folder first
+2. Consult the orchestrator's coordination patterns
+3. Review role boundaries to ensure correct agent
+4. Check context-manifest.yaml for loading strategies
+5. Follow the API-first architecture principles
+
+---
+
+**This team is optimized for building production-ready, secure, multi-tenant SaaS applications with API-first architecture.**
+
+For detailed agent capabilities, see individual agent YAML files in `.claude-code/agents/fullstack-team/agents/`.

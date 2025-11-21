@@ -126,6 +126,16 @@ A complete AI-powered development team for building modern Next.js SaaS applicat
 - **CI/CD**: GitHub Actions
 - **Monitoring**: Sentry + OpenTelemetry
 
+## IDE Support
+
+### Claude Code ✅
+Native support with full agent coordination, role enforcement, and skills management.
+
+### Cursor ✅
+Integrated via `.cursorrules` file and `@` file mentions. See `CURSOR-INTEGRATION.md` for details.
+
+**Both IDEs** can leverage the full team, with Claude Code providing tighter integration and Cursor offering real-time editing suggestions.
+
 ## Quick Start
 
 ### 1. Start with the Orchestrator
