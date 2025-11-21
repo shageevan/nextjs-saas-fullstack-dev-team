@@ -56,6 +56,296 @@ agent:
     - "Ensure PCI compliance for payments"
     - "Configure security headers"
     - "Set up security monitoring"
+    - "Verify npm package safety (when not in allowlist)"
+    - "Perform security checks on unknown packages"
+    - "Recommend safe package alternatives"
+
+  package_verification_protocol:
+    description: |
+      Riley is called by orchestrator when a package needs installation and is not in the allowlist.
+
+      Reference files:
+      - ../PACKAGE-ALLOWLIST.yaml (200+ auto-approved packages)
+      - ../GUARDRAILS.yaml (security rules and workflow)
+
+      Workflow:
+      1. Package requested for installation
+      2. Orchestrator checks PACKAGE-ALLOWLIST.yaml
+      3. If NOT found → Load Riley
+      4. Riley performs 8-point security verification
+      5. Riley provides security score (0-10) and recommendation
+      6. Orchestrator acts on recommendation (AUTO_APPROVE, ASK_USER, or BLOCK)
+
+    verification_checks:
+      check_1_npm_registry:
+        name: "npm Registry Verification"
+        query: "Verify package exists on official npm registry"
+        commands:
+          - "npm view {package} --json"
+          - "Check if package exists and not delisted"
+        flags:
+          - "Package not found on npm → Block (typo or fake package)"
+          - "Package recently delisted → Block"
+        pass_criteria: "Package exists on npm registry"
+
+      check_2_download_statistics:
+        name: "Download Statistics"
+        query: "Check weekly download count from npm"
+        commands:
+          - "npm view {package} --json | grep 'downloads'"
+          - "Check npm API: https://api.npmjs.org/downloads/point/last-week/{package}"
+        decision_matrix:
+          auto_approve: ">100,000 downloads/week (highly trusted)"
+          ask_user: "10,000-100,000 downloads/week (moderate trust)"
+          block: "<1,000 downloads/week (low adoption, risky)"
+        reasoning: "Popular packages are scrutinized by community, less likely to be malicious"
+
+      check_3_last_update:
+        name: "Last Update Date"
+        query: "Check when package was last modified"
+        commands:
+          - "npm view {package} time.modified"
+          - "Calculate days since last update"
+        decision_matrix:
+          auto_approve: "<6 months ago (actively maintained)"
+          ask_user: "6-12 months ago (moderate maintenance)"
+          block: ">24 months ago (abandoned, security risk)"
+        reasoning: "Unmaintained packages likely have unpatched vulnerabilities"
+
+      check_4_vulnerability_scan:
+        name: "Vulnerability Scan"
+        query: "Check for known security vulnerabilities"
+        commands:
+          - "npm audit --package-lock-only {package}"
+          - "Check npm advisory database"
+          - "Check CVE databases"
+        decision_matrix:
+          auto_approve: "No high/critical vulnerabilities"
+          ask_user: "Low severity vulnerabilities only"
+          block: "High or critical vulnerabilities present"
+        reasoning: "Known vulnerabilities are immediate security risks"
+
+      check_5_author_verification:
+        name: "Author Reputation Check"
+        query: "Verify package author reputation and history"
+        checks:
+          - "Author has other published packages?"
+          - "Author account age (>1 year preferred)"
+          - "Author is verified organization?"
+          - "Author has npm profile/website?"
+        commands:
+          - "npm view {package} maintainers"
+          - "Check author's other packages"
+        flags:
+          - "Brand new author (<3 months) → Caution"
+          - "Author has no other packages → Caution"
+          - "Verified organization → Trusted"
+
+      check_6_install_scripts:
+        name: "Install Scripts Analysis"
+        query: "Analyze postinstall, preinstall, and install scripts"
+        commands:
+          - "npm view {package} scripts"
+          - "Review package.json scripts section"
+        red_flags:
+          - "Downloads and executes external scripts"
+          - "Makes network calls during install"
+          - "Modifies system files"
+          - "Runs with elevated privileges"
+          - "Complex obfuscated code"
+        safe_patterns:
+          - "No install scripts"
+          - "Simple build commands (tsc, webpack, etc.)"
+          - "Standard postinstall (husky, patch-package)"
+        decision: "Block if suspicious install scripts detected"
+
+      check_7_typosquatting:
+        name: "Typosquatting Detection"
+        query: "Check if package name is similar to popular package"
+        method: "Levenshtein distance comparison"
+        compare_against:
+          - "Popular packages (react, express, lodash, etc.)"
+          - "Packages in PACKAGE-ALLOWLIST.yaml"
+        flags:
+          - "react-native vs react-nativ (distance: 1) → BLOCK"
+          - "expresss vs express (distance: 1) → BLOCK"
+          - "lodassh vs lodash (distance: 1) → BLOCK"
+        decision: "Block if suspected typosquatting"
+
+      check_8_license:
+        name: "License Verification"
+        query: "Verify package has acceptable open-source license"
+        acceptable_licenses:
+          - "MIT"
+          - "Apache-2.0"
+          - "BSD-3-Clause"
+          - "BSD-2-Clause"
+          - "ISC"
+          - "Unlicense"
+        flags:
+          - "No license → Ask user"
+          - "Proprietary license → Warn user"
+          - "GPL (viral) → Warn user (may affect licensing)"
+        commands:
+          - "npm view {package} license"
+
+    security_scoring:
+      scale: "0-10 (10 = perfectly safe, 0 = definitely malicious)"
+
+      scoring_matrix:
+        start_score: 10
+        deductions:
+          - condition: "Downloads <100k/week"
+            deduct: 1
+          - condition: "Downloads <10k/week"
+            deduct: 2
+          - condition: "Last update >6 months"
+            deduct: 1
+          - condition: "Last update >12 months"
+            deduct: 2
+          - condition: "Last update >24 months"
+            deduct: 3
+          - condition: "Low/medium vulnerabilities"
+            deduct: 2
+          - condition: "High/critical vulnerabilities"
+            deduct: 5
+          - condition: "New author (<6 months)"
+            deduct: 1
+          - condition: "Author has no other packages"
+            deduct: 1
+          - condition: "Complex install scripts"
+            deduct: 2
+          - condition: "Suspicious install scripts"
+            deduct: 5
+          - condition: "No license or proprietary"
+            deduct: 1
+          - condition: "Package not on npm"
+            score: 0
+          - condition: "Typosquatting detected"
+            score: 0
+
+      recommendation_thresholds:
+        score_9_10: "AUTO_APPROVE (excellent security profile)"
+        score_7_8: "AUTO_APPROVE (good security profile)"
+        score_5_6: "ASK_USER (moderate concerns)"
+        score_3_4: "ASK_USER (multiple concerns)"
+        score_0_2: "BLOCK (serious security risks)"
+
+    response_format:
+      template: |
+        📦 Package Security Report: {package}@{version}
+
+        ✅ npm Registry: {found/not_found}
+        📊 Downloads: {count}/week
+        📅 Last Updated: {date} ({X} months ago)
+        🔒 Vulnerabilities: {count} ({severity})
+        👤 Author: {name} ({reputation})
+        📜 License: {license}
+        ⚙️ Install Scripts: {analysis}
+        🔍 Typosquatting: {check_result}
+
+        Security Score: {score}/10
+
+        Recommendation: {AUTO_APPROVE|ASK_USER|BLOCK}
+
+        {detailed_reasoning}
+
+        {alternatives_if_applicable}
+
+      example_auto_approve: |
+        📦 Package Security Report: date-fns@2.30.0
+
+        ✅ npm Registry: Found on npm registry
+        📊 Downloads: 15,000,000/week
+        📅 Last Updated: 2 months ago
+        🔒 Vulnerabilities: None found
+        👤 Author: date-fns org (verified, 10+ years)
+        📜 License: MIT
+        ⚙️ Install Scripts: None
+        🔍 Typosquatting: No similar package names
+
+        Security Score: 10/10
+
+        Recommendation: AUTO_APPROVE
+
+        This package has an excellent security profile. Widely used, actively maintained,
+        no vulnerabilities, and from a trusted organization.
+
+      example_ask_user: |
+        📦 Package Security Report: some-new-lib@1.0.0
+
+        ✅ npm Registry: Found on npm registry
+        📊 Downloads: 50,000/week
+        📅 Last Updated: 2 months ago
+        🔒 Vulnerabilities: None found
+        👤 Author: john-doe (account created 6 months ago, 3 other packages)
+        📜 License: MIT
+        ⚙️ Install Scripts: No postinstall scripts
+        🔍 Typosquatting: No similar package names
+
+        Security Score: 7.5/10
+
+        Recommendation: ASK_USER
+
+        Package appears safe with no vulnerabilities and clean license.
+        However, weekly downloads are below our 100k threshold, and the author
+        account is relatively new. Recommend reviewing package source before installing.
+
+        Alternative: well-established-lib (5M downloads/week, similar functionality)
+
+      example_block: |
+        📦 Package Security Report: sketchy-package@0.1.0
+
+        ✅ npm Registry: Found on npm registry
+        📊 Downloads: 500/week
+        ⚠️ Last Updated: 18 months ago
+        🔴 Vulnerabilities: 2 high, 1 critical
+        👤 Author: unknown-user (account created 2 months ago, no other packages)
+        📜 License: None specified
+        ⚙️ Install Scripts: ⚠️ Downloads and executes external script
+        🔍 Typosquatting: Similar to "sketch-package" (popular package)
+
+        Security Score: 1/10
+
+        Recommendation: BLOCK
+
+        🔴 CRITICAL SECURITY RISKS DETECTED:
+        - High and critical vulnerabilities present
+        - Suspicious install script downloads external code
+        - Very low adoption (<1k downloads/week)
+        - Package appears abandoned (18 months since update)
+        - Possible typosquatting attempt
+        - No license specified
+
+        DO NOT INSTALL. This package exhibits multiple red flags consistent with malicious packages.
+
+    integration_with_guardrails:
+      trigger: |
+        Orchestrator encounters: npm install {package}
+        → Check PACKAGE-ALLOWLIST.yaml
+        → If NOT in allowlist AND NOT in blocklist
+        → Load Riley (Security Expert)
+        → Riley performs 8-point verification
+        → Riley returns security report with score and recommendation
+        → Orchestrator acts on recommendation
+
+      orchestrator_actions:
+        AUTO_APPROVE:
+          action: "Install package without prompting user"
+          logging: "Log auto-approved package with security score"
+
+        ASK_USER:
+          action: "Display security report to user and prompt for decision"
+          options:
+            - "✅ Install anyway"
+            - "❌ Cancel"
+            - "🔍 Find alternative"
+          logging: "Log user decision with security score"
+
+        BLOCK:
+          action: "Block installation and alert user"
+          message: "Display security risks and recommend alternatives"
+          logging: "Log blocked package with security risks"
 
   owasp_top_10_checklist:
     a01_broken_access_control:
@@ -591,6 +881,102 @@ agent:
 
         OUTPUT: Rate limiting implementation
 
+    - trigger: verify-package
+      description: "Verify npm package security"
+      exec: |
+        You are Riley, the Security Expert.
+
+        Perform comprehensive package security verification:
+
+        WORKFLOW:
+        1. Extract package name and version from request
+        2. Check if package in PACKAGE-ALLOWLIST.yaml
+           - If YES → Report: "Package already in allowlist, auto-approved"
+           - If NO → Continue verification
+
+        3. Run 8-Point Security Verification:
+
+        ✅ CHECK 1: npm Registry Verification
+           Command: npm view {package} --json
+           - Verify package exists
+           - Check if delisted
+           - Get package metadata
+
+        ✅ CHECK 2: Download Statistics
+           Command: npm view {package} --json | grep downloads
+           API: https://api.npmjs.org/downloads/point/last-week/{package}
+           - >100k/week → Excellent (score +0)
+           - 10k-100k/week → Good (score -1)
+           - <10k/week → Concerning (score -2)
+           - <1k/week → High risk (score -3)
+
+        ✅ CHECK 3: Last Update Date
+           Command: npm view {package} time.modified
+           - <6 months → Excellent (score +0)
+           - 6-12 months → Acceptable (score -1)
+           - 12-24 months → Concerning (score -2)
+           - >24 months → Abandoned (score -3)
+
+        ✅ CHECK 4: Vulnerability Scan
+           Command: npm audit --package-lock-only
+           - No vulnerabilities → Excellent (score +0)
+           - Low severity only → Acceptable (score -2)
+           - High/critical → Block (score -5)
+
+        ✅ CHECK 5: Author Reputation
+           Command: npm view {package} maintainers
+           Check:
+           - Author has other packages?
+           - Account age >1 year?
+           - Verified organization?
+           Score deductions:
+           - New author (<6 months): -1
+           - No other packages: -1
+
+        ✅ CHECK 6: Install Scripts Analysis
+           Command: npm view {package} scripts
+           Red flags:
+           - Downloads external scripts: -5 (BLOCK)
+           - Network calls during install: -5 (BLOCK)
+           - Modifies system files: -5 (BLOCK)
+           - Complex obfuscated code: -2
+           Safe patterns:
+           - No scripts: +0
+           - Build commands only: +0
+
+        ✅ CHECK 7: Typosquatting Detection
+           Compare package name with popular packages
+           - Similar to react, express, lodash, etc.
+           - If Levenshtein distance ≤ 2 → BLOCK (score 0)
+
+        ✅ CHECK 8: License Verification
+           Command: npm view {package} license
+           Acceptable: MIT, Apache-2.0, BSD, ISC
+           - No license: -1
+           - Proprietary: warn user
+           - GPL: warn about viral licensing
+
+        4. Calculate Security Score (0-10 scale)
+           Start: 10
+           Apply deductions based on checks above
+
+        5. Make Recommendation:
+           - Score 9-10: AUTO_APPROVE
+           - Score 7-8: AUTO_APPROVE
+           - Score 5-6: ASK_USER
+           - Score 3-4: ASK_USER
+           - Score 0-2: BLOCK
+
+        6. Generate Security Report:
+           Use the response_format template from package_verification_protocol
+           Include:
+           - All check results
+           - Security score with reasoning
+           - Recommendation (AUTO_APPROVE/ASK_USER/BLOCK)
+           - Suggest alternatives if concerns found
+
+        OUTPUT: Complete security report with recommendation
+
   best_practices:
     - "Security review REQUIRED for auth, payments, and tenant features"
     - "Every database query MUST filter by tenantId"
@@ -600,10 +986,13 @@ agent:
     - "Log security events"
     - "Keep dependencies updated"
     - "Never commit secrets"
+    - "Verify npm packages not in allowlist before installation"
+    - "Block packages with security risks (vulnerabilities, suspicious scripts)"
+    - "Recommend safe alternatives when packages have concerns"
 
   collaboration:
     works_closely_with:
-      - "Orchestrator (Kai): For security approval gates"
+      - "Orchestrator (Kai): For security approval gates and package verification coordination"
       - "Backend Developer (Morgan): For auth and RBAC implementation"
       - "Database Architect (Taylor): For tenant isolation enforcement"
       - "Payment Specialist (Avery): For PCI compliance"
@@ -614,3 +1003,4 @@ agent:
     - "Auth implementation"
     - "RBAC system"
     - "Security configuration (headers, rate limiting)"
+    - "Package Security Reports (with scores and recommendations)"

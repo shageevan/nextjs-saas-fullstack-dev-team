@@ -78,6 +78,7 @@ A complete AI-powered development team for building modern Next.js SaaS applicat
 - Multi-tenant security
 - OWASP Top 10 prevention
 - PCI compliance for payments
+- Package security verification (8-point checks)
 
 **Avery** - Payment Integration Specialist
 - Stripe Checkout & Subscriptions
@@ -250,6 +251,62 @@ Every application built by this team includes:
 - Security headers configured
 - Rate limiting
 - PCI compliance for payments
+
+### Guardrails System (Security & Safety)
+
+Comprehensive security system that prevents dangerous operations while allowing agents to work freely:
+
+**Components:**
+- **117 Dangerous Command Patterns** - Automatically blocked (file deletion, privilege escalation, remote execution, secret exposure, etc.)
+- **200+ Auto-Approved Packages** - Well-known packages install without prompting (React, Next.js, Stripe, Prisma, etc.)
+- **Security Agent Verification** - Riley performs 8-point security checks on unknown packages
+- **Context-Aware Rules** - Different rules for production vs development environments
+- **Complete Audit Logging** - All security decisions logged for review
+
+**Package Installation Intelligence:**
+
+Smart system that balances security with productivity:
+
+1. **Auto-Approve** (200+ packages) - React, Next.js, Stripe, Tailwind, Prisma, etc. install instantly
+2. **Security Verification** (unknown packages) - Riley checks:
+   - npm registry verification
+   - Download statistics (>100k/week preferred)
+   - Last update date (<6 months preferred)
+   - Vulnerability scan (npm audit)
+   - Author reputation
+   - Install scripts analysis
+   - Typosquatting detection
+   - License verification
+3. **Security Scoring** - Packages get 0-10 score:
+   - 9-10: Auto-approve (excellent security)
+   - 7-8: Auto-approve (good security)
+   - 5-6: Ask user (moderate concerns)
+   - 3-4: Ask user (multiple concerns)
+   - 0-2: Block (serious risks)
+4. **User Prompt** (if uncertain) - Security report with alternatives
+
+**Critical Blocks (Never Allow):**
+- File system destruction (`rm -rf /`, disk wiping)
+- System modifications (chmod on system files, killing processes)
+- Privilege escalation (sudo commands, SUID manipulation)
+- Remote execution (`curl | bash`)
+- Secret exposure (committing .env files, printing secrets)
+- Git destructive operations (force push to main/master)
+- Dangerous Docker operations (--privileged, mounting sensitive dirs)
+
+**User Confirmation Required:**
+- Safe deletions (node_modules, dist, build)
+- Git operations (force push to feature branches)
+- Database operations (in development only)
+- Network operations (SSH, port listening)
+
+**Documentation:**
+- `GUARDRAILS.yaml` - Main security configuration
+- `PACKAGE-ALLOWLIST.yaml` - 200+ auto-approved packages
+- `GUARDRAILS-INTEGRATION.md` - Complete implementation guide
+- `DANGEROUS-COMMANDS-REVIEW.md` - Full list of blocked commands
+
+**Status:** ✅ ACTIVE and ENFORCED on all agents
 
 ### Best Practices Enforced
 
@@ -548,6 +605,12 @@ const event = stripe.webhooks.constructEvent(
 - `docs/CONTEXT-OPTIMIZATION.md` - Full optimization strategy
 - `docs/MIGRATION-GUIDE.md` - How to migrate to modular structure
 - `context-manifest.yaml` - Context loading rules
+
+**Security & Guardrails:**
+- `GUARDRAILS.yaml` - Main security configuration (117 dangerous commands)
+- `PACKAGE-ALLOWLIST.yaml` - 200+ auto-approved packages
+- `GUARDRAILS-INTEGRATION.md` - Complete implementation guide
+- `DANGEROUS-COMMANDS-REVIEW.md` - Full list of blocked commands
 
 **Skills Knowledge Base:**
 - `skills/README.md` - Skills system overview & usage
