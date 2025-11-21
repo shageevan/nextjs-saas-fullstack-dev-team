@@ -21,6 +21,7 @@ The **Fullstack AI Tech Team** is a specialized collection of 12 AI agents desig
 - **Context Optimized** - 72% token reduction (12,300 → 3,500 tokens)
 - **Skills Knowledge Base** - 33 curated skills with 90% token efficiency
 - **MCP Integration** - 5 tools with direct operations (PostgreSQL, GitHub, Docker, Stripe, Redis)
+- **Guardrails System** - 117 security rules, 200+ auto-approved packages, smart verification
 - **Dual IDE Support** - Native support in Claude Code and Cursor 2.1+
 
 ---
@@ -60,7 +61,7 @@ See [OPTIMIZATION-SUMMARY.md](.claude-code/agents/fullstack-team/OPTIMIZATION-SU
 - **Taylor** - Database Architect - Multi-tenant schema, Prisma/Drizzle, query optimization
 
 ### Specialized
-- **Riley** - Security Expert - Authentication, RBAC, OWASP Top 10, PCI compliance
+- **Riley** - Security Expert - Authentication, RBAC, OWASP Top 10, PCI compliance, package verification
 - **Avery** - Payment Specialist - Stripe integration, webhooks, subscriptions
 - **Casey** - DevOps Engineer - Docker, Kubernetes, CI/CD, monitoring
 - **Quinn** - QA Engineer - Unit tests (Vitest), integration tests, E2E (Playwright)
@@ -284,6 +285,99 @@ const projects = await db.project.findMany()
 - Rate limiting
 - PCI compliance for payments
 
+### Guardrails System
+
+Comprehensive security system that prevents dangerous operations while allowing agents to work freely:
+
+**🔒 What It Protects Against:**
+- **117 Dangerous Command Patterns** - File deletion, privilege escalation, remote execution, secret exposure
+- **Malicious Packages** - Typosquatting, suspicious install scripts, known vulnerabilities
+- **Production Accidents** - Force push to main, database drops, configuration changes
+- **Security Leaks** - .env commits, secret printing, unauthorized access
+
+**📦 Smart Package Installation:**
+
+No more prompts for every `npm install`:
+
+1. **Auto-Approve (200+ packages)** ✅
+   - React, Next.js, Stripe, Tailwind, Prisma, Zod, Radix UI, etc.
+   - All @types/*, @vercel/*, @radix-ui/*, @stripe/*, etc.
+   - Installs instantly without user prompts
+
+2. **Security Verification (unknown packages)** 🔍
+   - Riley (Security Expert) performs 8-point check:
+     - npm registry verification
+     - Download statistics (>100k/week preferred)
+     - Last update check (<6 months preferred)
+     - Vulnerability scan (npm audit)
+     - Author reputation
+     - Install scripts analysis
+     - Typosquatting detection
+     - License verification
+
+3. **Security Scoring (0-10 scale)** 📊
+   - **9-10:** Auto-approve (excellent security)
+   - **7-8:** Auto-approve (good security)
+   - **5-6:** Ask user (moderate concerns)
+   - **3-4:** Ask user (multiple concerns)
+   - **0-2:** Block (serious security risks)
+
+4. **User Prompt (if uncertain)** ⚠️
+   - Full security report with score
+   - Alternative package suggestions
+   - Clear risk explanation
+
+**Example: Unknown Package**
+```
+📦 Package Security Report: some-new-lib@1.0.0
+
+✅ npm Registry: Found
+📊 Downloads: 50,000/week
+📅 Last Updated: 2 months ago
+🔒 Vulnerabilities: None found
+👤 Author: john-doe (6 months old, 3 packages)
+📜 License: MIT
+⚙️ Install Scripts: None
+🔍 Typosquatting: Clean
+
+Security Score: 7.5/10
+
+Recommendation: ASK_USER
+
+Package appears safe but has moderate downloads.
+Author account is relatively new.
+
+Alternative: well-established-lib (5M downloads/week)
+```
+
+**🚫 Critical Blocks (Never Allow):**
+- `rm -rf /` and system directories
+- `sudo` operations and privilege escalation
+- `curl | bash` and remote execution
+- Committing `.env` files or secrets
+- Force push to `main`/`master`/`production`
+- Docker `--privileged` mode
+- Database drops in production
+
+**✋ User Confirmation Required:**
+- `rm -rf node_modules` (safe paths only)
+- Force push to feature branches
+- Database operations in development
+- SSH/network operations
+
+**📋 Audit Logging:**
+- All blocked commands logged
+- Package installation decisions tracked
+- Security scores recorded
+- User approvals documented
+
+**Documentation:**
+- [GUARDRAILS.yaml](.claude-code/agents/fullstack-team/GUARDRAILS.yaml) - Main config (117 rules)
+- [PACKAGE-ALLOWLIST.yaml](.claude-code/agents/fullstack-team/PACKAGE-ALLOWLIST.yaml) - 200+ packages
+- [GUARDRAILS-INTEGRATION.md](.claude-code/agents/fullstack-team/GUARDRAILS-INTEGRATION.md) - Complete guide
+
+**Status:** ✅ ACTIVE and ENFORCED on all agents
+
 ### Skills Knowledge Base
 
 33 curated skills across 5 categories:
@@ -353,10 +447,15 @@ fullstack/
 └── .claude-code/
     └── agents/
         └── fullstack-team/
-            ├── README.md               # Team documentation
-            ├── MCP-SETUP.md            # MCP installation guide
-            ├── CURSOR-INTEGRATION.md   # Cursor usage guide
-            ├── OPTIMIZATION-SUMMARY.md # Performance metrics
+            ├── README.md                       # Team documentation
+            ├── MCP-SETUP.md                    # MCP installation guide
+            ├── CURSOR-INTEGRATION.md           # Cursor usage guide
+            ├── OPTIMIZATION-SUMMARY.md         # Performance metrics
+            │
+            ├── GUARDRAILS.yaml                 # Security rules (117 commands) 🔒
+            ├── PACKAGE-ALLOWLIST.yaml          # 200+ auto-approved packages 📦
+            ├── GUARDRAILS-INTEGRATION.md       # Complete security guide 📋
+            ├── DANGEROUS-COMMANDS-REVIEW.md    # Full command list 🚫
             │
             ├── agents/                 # 12 agent definitions
             │   ├── orchestrator/
@@ -367,7 +466,7 @@ fullstack/
             │   ├── frontend.agent.yaml
             │   ├── backend.agent.yaml
             │   ├── database.agent.yaml
-            │   ├── security.agent.yaml
+            │   ├── security.agent.yaml         # ← Includes package verification
             │   ├── payment.agent.yaml
             │   ├── devops.agent.yaml
             │   └── qa.agent.yaml
@@ -680,6 +779,32 @@ const event = stripe.webhooks.constructEvent(
 
 ---
 
+## Documentation
+
+### Core Guides
+- [Team README](.claude-code/agents/fullstack-team/README.md) - Complete team documentation
+- [OPTIMIZATION-SUMMARY.md](.claude-code/agents/fullstack-team/OPTIMIZATION-SUMMARY.md) - Context optimization & ROI
+- [MCP-SETUP.md](.claude-code/agents/fullstack-team/MCP-SETUP.md) - MCP server installation
+- [CURSOR-INTEGRATION.md](.claude-code/agents/fullstack-team/CURSOR-INTEGRATION.md) - Cursor IDE usage
+
+### Security & Guardrails
+- [GUARDRAILS.yaml](.claude-code/agents/fullstack-team/GUARDRAILS.yaml) - Security rules (117 commands)
+- [PACKAGE-ALLOWLIST.yaml](.claude-code/agents/fullstack-team/PACKAGE-ALLOWLIST.yaml) - 200+ auto-approved packages
+- [GUARDRAILS-INTEGRATION.md](.claude-code/agents/fullstack-team/GUARDRAILS-INTEGRATION.md) - Complete security guide
+- [DANGEROUS-COMMANDS-REVIEW.md](.claude-code/agents/fullstack-team/DANGEROUS-COMMANDS-REVIEW.md) - Full command list
+
+### Skills & Patterns
+- [skills/README.md](.claude-code/agents/fullstack-team/skills/README.md) - Skills system overview
+- [skills/index.yaml](.claude-code/agents/fullstack-team/skills/index.yaml) - 33 skills index
+- [skills/SKILL-TEMPLATE.md](.claude-code/agents/fullstack-team/skills/SKILL-TEMPLATE.md) - Creating new skills
+
+### Advanced Topics
+- [docs/CONTEXT-OPTIMIZATION.md](.claude-code/agents/fullstack-team/docs/CONTEXT-OPTIMIZATION.md) - Full optimization strategy
+- [docs/ROLE-BOUNDARIES.md](.claude-code/agents/fullstack-team/docs/ROLE-BOUNDARIES.md) - Agent boundaries & handoffs
+- [docs/PARALLEL-EXECUTION.md](.claude-code/agents/fullstack-team/docs/PARALLEL-EXECUTION.md) - Parallel coordination
+
+---
+
 ## Contributing
 
 This is a living system designed to grow and improve. Contributions are welcome!
@@ -710,6 +835,7 @@ This is a living system designed to grow and improve. Contributions are welcome!
 - ✅ MCP integration (5 tools)
 - ✅ Claude Code + Cursor support
 - ✅ Context optimization (72% reduction)
+- ✅ Guardrails system (117 rules, 200+ packages)
 
 ### Coming Soon
 - [ ] Workflow YAML files for common tasks
