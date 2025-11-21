@@ -407,9 +407,14 @@ skills/
 - Reusability: Unlimited
 
 **Efficiency vs Loading All Skills:**
-- Naive approach: Load all 27 skills = 10,800 tokens
-- Optimized approach: Load index + 1 skill = 1,200 tokens
-- **Savings: 89% reduction**
+- Naive approach: Load all 33 skills = 13,200 tokens
+- Optimized approach: Load index + 1 skill = 1,350 tokens (index 950 + skill 400)
+- **Savings: 90% reduction**
+
+**MCP Server Integration:**
+- 5 tools have MCP servers (PostgreSQL, GitHub, Docker, Stripe CLI, Redis)
+- MCPs provide direct tool access, enriching skill documentation
+- Agents verify MCP availability before operations
 
 ### ROI Example
 
@@ -430,22 +435,26 @@ With skills:
 
 ### Skills Growth Over Time
 
-**Month 1:**
-- Skills created: 10
-- Tokens invested: 12,000
-- Time saved: ~30 minutes
+**Current Status (Launch):**
+- Skills created: 33
+- Categories: 5 (frameworks, libraries, patterns, tools, best-practices)
+- MCP-enabled tools: 5 (PostgreSQL, GitHub, Docker, Stripe CLI, Redis)
+- Average skill size: 400 tokens
+- Index size: 950 tokens
 
-**Month 6:**
-- Skills accumulated: 60
+**Projected Month 6:**
+- Skills accumulated: 60-80
 - Average reuse: 5x per skill
 - Time saved: ~20 hours
 - Knowledge quality: Curated and tested
+- MCP integration: 8-10 tools
 
-**Year 1:**
+**Projected Year 1:**
 - Skills accumulated: 100+
 - Time saved: 100+ hours
 - Team intelligence: Significantly improved
 - Consistency: Very high
+- Full MCP coverage: All major tools
 
 ### Integration with Agent Optimization
 
@@ -471,9 +480,18 @@ Skills complement agent optimization:
 ### Skills Knowledge Base
 - ✅ `skills/README.md` - Skills system overview (350 lines)
 - ✅ `skills/SKILLS-OPTIMIZATION.md` - Context optimization for skills (450 lines)
-- ✅ `skills/index.yaml` - Skills index (350 lines)
+- ✅ `skills/index.yaml` - Skills index with 33 skills (375 lines)
 - ✅ `skills/SKILL-TEMPLATE.md` - Template for new skills (150 lines)
-- ✅ `skills/patterns/server-actions.md` - Example skill (150 lines)
+- ✅ `MCP-SETUP.md` - MCP server installation and configuration guide (400 lines)
+
+### Tool Skills (MCP-Enabled)
+- ✅ `skills/tools/postgresql.md` - PostgreSQL with MCP integration (420 tokens)
+- ✅ `skills/tools/github.md` - GitHub & Git with MCP integration (400 tokens)
+- ✅ `skills/tools/docker.md` - Docker with MCP integration (400 tokens)
+- ✅ `skills/tools/stripe-cli.md` - Stripe CLI with MCP integration (400 tokens)
+- ✅ `skills/tools/redis.md` - Redis/Upstash with MCP integration (400 tokens)
+- ✅ `skills/tools/vitest.md` - Vitest unit testing (400 tokens)
+- ✅ `skills/tools/playwright.md` - Playwright E2E testing (400 tokens)
 
 ## Conclusion
 

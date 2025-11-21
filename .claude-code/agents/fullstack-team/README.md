@@ -261,27 +261,32 @@ Agents build and maintain a curated knowledge repository that grows over time:
 - **Automatic knowledge accumulation** - Agents search skills folder before internet
 - **Create skills on-the-fly** - If knowledge not found, agent researches and creates skill file
 - **90% faster than web searches** - Instant access to accumulated knowledge
-- **89% token efficiency** - Load index (800 tokens) + specific skill (400 tokens) vs loading all
+- **90% token efficiency** - Load index (950 tokens) + specific skill (400 tokens) vs loading all
 - **Consistent patterns** - All agents use same curated, tested patterns
 - **Compounding intelligence** - Team gets smarter with every task
+- **MCP integration** - 5 tools have MCP servers for direct operations (PostgreSQL, GitHub, Docker, Stripe CLI, Redis)
 
 **Structure:**
 ```
 skills/
 ├── frameworks/      # Next.js, React, TypeScript
 ├── libraries/       # Shadcn UI, Prisma, Stripe, Zod
-├── patterns/        # Server Actions, multi-tenant, RBAC
-├── tools/           # Docker, Kubernetes, Playwright
+├── patterns/        # Server Actions, multi-tenant, RBAC, API-first
+├── tools/           # PostgreSQL, GitHub, Docker, Stripe CLI, Redis, Vitest, Playwright
 └── best-practices/  # Security, performance, accessibility
 ```
 
 **Agent Workflow:**
 1. Agent needs knowledge → Search skills folder first
 2. If found → Load skill (400 tokens, instant)
-3. If not found → Search internet, create skill file, use it
-4. Future agents → Reuse skill (400 tokens, no internet search needed)
+3. Check for MCP server → Use for direct operations if available
+4. If not found → Search internet, create skill file, use it
+5. Future agents → Reuse skill (400 tokens, no internet search needed)
 
-See `skills/README.md` and `skills/SKILLS-OPTIMIZATION.md` for details.
+**Current Skills:** 33 across 5 categories
+**MCP-Enabled Tools:** PostgreSQL, GitHub, Docker, Stripe CLI, Redis
+
+See `skills/README.md`, `skills/SKILLS-OPTIMIZATION.md`, and `MCP-SETUP.md` for details.
 
 ## Team Bundles
 
@@ -399,22 +404,24 @@ Best for: Production deployments, infrastructure
 
 ## MCP Servers
 
-This team leverages Model Context Protocol servers for enhanced capabilities:
+This team leverages Model Context Protocol servers for enhanced capabilities. See `MCP-SETUP.md` for complete installation and configuration guide.
 
 ### Required
-- `@modelcontextprotocol/server-postgres` - Database operations
-- `@modelcontextprotocol/server-github` - Git operations
-- `stripe-mcp-server` - Stripe integration
+- `@modelcontextprotocol/server-postgres` - Database operations (skill: `tools/postgresql.md`)
+- `@modelcontextprotocol/server-github` - Git operations (skill: `tools/github.md`)
+- `stripe-mcp-server` - Stripe integration (skill: `tools/stripe-cli.md`)
 
 ### Recommended
-- `@modelcontextprotocol/server-docker` - Container management
+- `@modelcontextprotocol/server-docker` - Container management (skill: `tools/docker.md`)
+- `redis-mcp-server` - Cache management (skill: `tools/redis.md`)
 - `@modelcontextprotocol/server-kubernetes` - K8s orchestration
-- `redis-mcp-server` - Cache management
 
 ### Optional
 - `aws-mcp-server` - AWS services
 - `vercel-mcp-server` - Vercel deployment
 - `sentry-mcp-server` - Error tracking
+
+**Setup:** See `MCP-SETUP.md` for complete configuration with environment variables and troubleshooting.
 
 ## Architecture Patterns
 

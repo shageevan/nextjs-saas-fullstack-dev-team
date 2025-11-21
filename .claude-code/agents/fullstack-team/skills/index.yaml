@@ -151,13 +151,66 @@ skills:
       tags: ["errors", "exceptions", "logging", "reliability"]
 
   tools:
+    postgresql:
+      file: "tools/postgresql.md"
+      summary: "PostgreSQL database, multi-tenant isolation, RLS, indexes, queries"
+      estimated_tokens: 420
+      official_docs: "https://www.postgresql.org/docs/"
+      mcp_server: "@modelcontextprotocol/server-postgres"
+      last_updated: "2025-01-22"
+      tags: ["database", "sql", "multi-tenant", "orm", "rls"]
+
+    github:
+      file: "tools/github.md"
+      summary: "GitHub & Git, version control, CI/CD, pull requests, conventional commits"
+      estimated_tokens: 400
+      official_docs: "https://docs.github.com"
+      mcp_server: "@modelcontextprotocol/server-github"
+      last_updated: "2025-01-22"
+      tags: ["git", "github", "version-control", "ci-cd", "collaboration"]
+
     docker:
       file: "tools/docker.md"
-      summary: "Docker containerization, Dockerfile, docker-compose, best practices"
+      summary: "Docker containerization, multi-stage builds, docker-compose, deployment"
       estimated_tokens: 400
       official_docs: "https://docs.docker.com"
+      mcp_server: "@modelcontextprotocol/server-docker"
       last_updated: "2025-01-22"
       tags: ["deployment", "containers", "devops"]
+
+    stripe-cli:
+      file: "tools/stripe-cli.md"
+      summary: "Stripe CLI, webhook testing, local development, API operations"
+      estimated_tokens: 400
+      official_docs: "https://stripe.com/docs/stripe-cli"
+      mcp_server: "stripe-mcp-server"
+      last_updated: "2025-01-22"
+      tags: ["stripe", "payments", "cli", "webhooks", "testing"]
+
+    redis:
+      file: "tools/redis.md"
+      summary: "Redis & Upstash, caching, rate limiting, session storage, performance"
+      estimated_tokens: 400
+      official_docs: "https://redis.io/docs/ | https://upstash.com/docs/redis"
+      mcp_server: "redis-mcp-server"
+      last_updated: "2025-01-22"
+      tags: ["redis", "caching", "rate-limiting", "upstash", "performance"]
+
+    vitest:
+      file: "tools/vitest.md"
+      summary: "Vitest unit testing, mocking, Server Actions testing, coverage"
+      estimated_tokens: 400
+      official_docs: "https://vitest.dev/guide"
+      last_updated: "2025-01-22"
+      tags: ["testing", "unit-tests", "mocking", "vitest"]
+
+    playwright:
+      file: "tools/playwright.md"
+      summary: "Playwright E2E testing, multi-tenant tests, Page Object Model, visual regression"
+      estimated_tokens: 400
+      official_docs: "https://playwright.dev/docs/intro"
+      last_updated: "2025-01-22"
+      tags: ["testing", "e2e", "automation", "playwright"]
 
     kubernetes:
       file: "tools/kubernetes.md"
@@ -190,22 +243,6 @@ skills:
       official_docs: "https://docs.sentry.io"
       last_updated: "2025-01-22"
       tags: ["monitoring", "errors", "observability"]
-
-    playwright:
-      file: "tools/playwright.md"
-      summary: "Playwright E2E testing, selectors, assertions, best practices"
-      estimated_tokens: 400
-      official_docs: "https://playwright.dev/docs/intro"
-      last_updated: "2025-01-22"
-      tags: ["testing", "e2e", "automation"]
-
-    vitest:
-      file: "tools/vitest.md"
-      summary: "Vitest unit testing, mocking, coverage, assertions"
-      estimated_tokens: 350
-      official_docs: "https://vitest.dev/guide"
-      last_updated: "2025-01-22"
-      tags: ["testing", "unit-tests", "mocking"]
 
   best-practices:
     security:
@@ -261,26 +298,35 @@ search_index:
   by_tag:
     framework: ["nextjs", "react", "typescript"]
     ui: ["shadcn-ui", "react"]
-    database: ["prisma", "drizzle", "database"]
-    payment: ["stripe"]
+    database: ["postgresql", "prisma", "drizzle", "database"]
+    payment: ["stripe", "stripe-cli"]
     auth: ["nextauth", "rbac"]
     security: ["security", "rbac", "nextauth", "api-first-architecture"]
     testing: ["playwright", "vitest", "testing"]
     deployment: ["docker", "kubernetes", "vercel", "github-actions"]
-    performance: ["performance", "caching"]
+    performance: ["performance", "caching", "redis"]
     api: ["api-first-architecture", "api-routes"]
+    git: ["github"]
+    caching: ["redis", "caching"]
 
   by_use_case:
     "implementing authentication": ["nextauth", "rbac", "security", "middleware"]
     "building forms": ["server-actions", "zod"]
-    "payment integration": ["stripe", "api-routes", "error-handling"]
-    "database queries": ["prisma", "drizzle", "database"]
+    "payment integration": ["stripe", "stripe-cli", "api-routes", "error-handling"]
+    "database queries": ["postgresql", "prisma", "drizzle", "database"]
+    "database setup": ["postgresql", "prisma", "drizzle"]
     "UI components": ["shadcn-ui", "react", "accessibility"]
-    "multi-tenant app": ["multi-tenant", "rbac", "middleware"]
+    "multi-tenant app": ["multi-tenant", "postgresql", "rbac", "middleware"]
     "API endpoints": ["api-routes", "server-actions", "error-handling", "api-first-architecture"]
     "external API": ["api-first-architecture", "api-routes", "security"]
     "testing": ["playwright", "vitest", "testing"]
+    "unit testing": ["vitest", "testing"]
+    "e2e testing": ["playwright", "testing"]
     "deployment": ["docker", "kubernetes", "vercel", "github-actions"]
+    "caching": ["redis", "caching", "performance"]
+    "rate limiting": ["redis", "security"]
+    "version control": ["github"]
+    "local webhook testing": ["stripe-cli"]
 
 # Loading Strategy
 loading:
@@ -316,10 +362,11 @@ freshness:
 
 # Usage Metrics (to be tracked)
 metrics:
-  total_skills: 28
+  total_skills: 33
   total_categories: 5
   average_tokens_per_skill: 400
-  index_size_tokens: 850
+  index_size_tokens: 950
+  tools_with_mcp: 5  # postgresql, github, docker, stripe-cli, redis
 
   target_metrics:
     skill_hit_rate: ">80%"  # How often skills exist vs need to create
