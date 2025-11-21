@@ -1,0 +1,327 @@
+# Skills Index - Quick Lookup (Tier 3A)
+# This index allows fast skill discovery without loading full skill content
+# Estimated tokens: ~800 (much smaller than loading all skills)
+
+version: "1.0.0"
+last_updated: "2025-01-22"
+
+# Index Structure:
+# - Load this index first for skill discovery
+# - Load individual skill only when needed
+# - Each skill has summary (50 tokens) + full content (200-500 tokens)
+
+skills:
+  frameworks:
+    nextjs:
+      file: "frameworks/nextjs.md"
+      summary: "Next.js 15+ App Router, Server Components, Server Actions, routing"
+      estimated_tokens: 450
+      official_docs: "https://nextjs.org/docs"
+      last_updated: "2025-01-22"
+      tags: ["framework", "react", "ssr", "routing"]
+
+    react:
+      file: "frameworks/react.md"
+      summary: "React 18+ hooks, components, context, performance optimization"
+      estimated_tokens: 400
+      official_docs: "https://react.dev"
+      last_updated: "2025-01-22"
+      tags: ["framework", "ui", "components", "hooks"]
+
+    typescript:
+      file: "frameworks/typescript.md"
+      summary: "TypeScript types, generics, utility types, patterns"
+      estimated_tokens: 350
+      official_docs: "https://www.typescriptlang.org/docs"
+      last_updated: "2025-01-22"
+      tags: ["language", "types", "static-typing"]
+
+  libraries:
+    shadcn-ui:
+      file: "libraries/shadcn-ui.md"
+      summary: "Shadcn UI components, theming, customization, accessibility"
+      estimated_tokens: 400
+      official_docs: "https://ui.shadcn.com"
+      last_updated: "2025-01-22"
+      tags: ["ui", "components", "design-system", "radix"]
+
+    prisma:
+      file: "libraries/prisma.md"
+      summary: "Prisma ORM, schema design, queries, migrations, relations"
+      estimated_tokens: 450
+      official_docs: "https://www.prisma.io/docs"
+      last_updated: "2025-01-22"
+      tags: ["orm", "database", "migrations", "queries"]
+
+    drizzle:
+      file: "libraries/drizzle.md"
+      summary: "Drizzle ORM, type-safe queries, migrations, performance"
+      estimated_tokens: 400
+      official_docs: "https://orm.drizzle.team/docs"
+      last_updated: "2025-01-22"
+      tags: ["orm", "database", "type-safe", "performance"]
+
+    stripe:
+      file: "libraries/stripe.md"
+      summary: "Stripe API, Checkout, Subscriptions, webhooks, billing"
+      estimated_tokens: 500
+      official_docs: "https://stripe.com/docs"
+      last_updated: "2025-01-22"
+      tags: ["payment", "subscriptions", "webhooks", "billing"]
+
+    nextauth:
+      file: "libraries/nextauth.md"
+      summary: "NextAuth.js authentication, providers, sessions, JWT"
+      estimated_tokens: 400
+      official_docs: "https://next-auth.js.org"
+      last_updated: "2025-01-22"
+      tags: ["auth", "authentication", "jwt", "oauth"]
+
+    zod:
+      file: "libraries/zod.md"
+      summary: "Zod validation, schemas, type inference, error handling"
+      estimated_tokens: 350
+      official_docs: "https://zod.dev"
+      last_updated: "2025-01-22"
+      tags: ["validation", "schemas", "type-safe"]
+
+  patterns:
+    api-first-architecture:
+      file: "patterns/api-first-architecture.md"
+      summary: "API-First design, secure external APIs, versioning, authentication, rate limiting"
+      estimated_tokens: 450
+      official_docs: "https://swagger.io/resources/articles/adopting-an-api-first-approach/"
+      last_updated: "2025-01-22"
+      tags: ["api", "architecture", "design", "rest", "external-access"]
+
+    server-actions:
+      file: "patterns/server-actions.md"
+      summary: "Next.js Server Actions for mutations, form handling, revalidation"
+      estimated_tokens: 400
+      official_docs: "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      last_updated: "2025-01-22"
+      tags: ["nextjs", "mutations", "forms", "server"]
+
+    multi-tenant:
+      file: "patterns/multi-tenant.md"
+      summary: "Multi-tenant architecture, row-level security, tenant isolation"
+      estimated_tokens: 450
+      official_docs: null
+      last_updated: "2025-01-22"
+      tags: ["architecture", "saas", "isolation", "security"]
+
+    rbac:
+      file: "patterns/rbac.md"
+      summary: "Role-based access control, permissions, middleware, guards"
+      estimated_tokens: 400
+      official_docs: null
+      last_updated: "2025-01-22"
+      tags: ["security", "authorization", "permissions", "roles"]
+
+    api-routes:
+      file: "patterns/api-routes.md"
+      summary: "Next.js API routes, REST endpoints, webhooks, middleware"
+      estimated_tokens: 350
+      official_docs: "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      last_updated: "2025-01-22"
+      tags: ["nextjs", "api", "rest", "webhooks"]
+
+    middleware:
+      file: "patterns/middleware.md"
+      summary: "Next.js middleware, auth checks, tenant resolution, redirects"
+      estimated_tokens: 350
+      official_docs: "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      last_updated: "2025-01-22"
+      tags: ["nextjs", "middleware", "auth", "routing"]
+
+    caching:
+      file: "patterns/caching.md"
+      summary: "Redis caching, Next.js cache, revalidation strategies"
+      estimated_tokens: 400
+      official_docs: "https://nextjs.org/docs/app/building-your-application/caching"
+      last_updated: "2025-01-22"
+      tags: ["performance", "redis", "cache", "optimization"]
+
+    error-handling:
+      file: "patterns/error-handling.md"
+      summary: "Error handling patterns, try-catch, error boundaries, logging"
+      estimated_tokens: 350
+      official_docs: "https://nextjs.org/docs/app/building-your-application/routing/error-handling"
+      last_updated: "2025-01-22"
+      tags: ["errors", "exceptions", "logging", "reliability"]
+
+  tools:
+    docker:
+      file: "tools/docker.md"
+      summary: "Docker containerization, Dockerfile, docker-compose, best practices"
+      estimated_tokens: 400
+      official_docs: "https://docs.docker.com"
+      last_updated: "2025-01-22"
+      tags: ["deployment", "containers", "devops"]
+
+    kubernetes:
+      file: "tools/kubernetes.md"
+      summary: "Kubernetes orchestration, deployments, services, scaling"
+      estimated_tokens: 450
+      official_docs: "https://kubernetes.io/docs"
+      last_updated: "2025-01-22"
+      tags: ["deployment", "orchestration", "devops", "scaling"]
+
+    github-actions:
+      file: "tools/github-actions.md"
+      summary: "GitHub Actions CI/CD, workflows, jobs, deployment pipelines"
+      estimated_tokens: 400
+      official_docs: "https://docs.github.com/en/actions"
+      last_updated: "2025-01-22"
+      tags: ["ci-cd", "automation", "deployment"]
+
+    vercel:
+      file: "tools/vercel.md"
+      summary: "Vercel deployment, environment variables, edge functions"
+      estimated_tokens: 350
+      official_docs: "https://vercel.com/docs"
+      last_updated: "2025-01-22"
+      tags: ["deployment", "hosting", "serverless"]
+
+    sentry:
+      file: "tools/sentry.md"
+      summary: "Sentry error tracking, monitoring, alerts, performance"
+      estimated_tokens: 350
+      official_docs: "https://docs.sentry.io"
+      last_updated: "2025-01-22"
+      tags: ["monitoring", "errors", "observability"]
+
+    playwright:
+      file: "tools/playwright.md"
+      summary: "Playwright E2E testing, selectors, assertions, best practices"
+      estimated_tokens: 400
+      official_docs: "https://playwright.dev/docs/intro"
+      last_updated: "2025-01-22"
+      tags: ["testing", "e2e", "automation"]
+
+    vitest:
+      file: "tools/vitest.md"
+      summary: "Vitest unit testing, mocking, coverage, assertions"
+      estimated_tokens: 350
+      official_docs: "https://vitest.dev/guide"
+      last_updated: "2025-01-22"
+      tags: ["testing", "unit-tests", "mocking"]
+
+  best-practices:
+    security:
+      file: "best-practices/security.md"
+      summary: "Security best practices, OWASP Top 10, PCI compliance, auth"
+      estimated_tokens: 500
+      official_docs: "https://owasp.org"
+      last_updated: "2025-01-22"
+      tags: ["security", "owasp", "compliance", "vulnerabilities"]
+
+    performance:
+      file: "best-practices/performance.md"
+      summary: "Performance optimization, Lighthouse, Core Web Vitals, caching"
+      estimated_tokens: 450
+      official_docs: "https://web.dev/performance"
+      last_updated: "2025-01-22"
+      tags: ["performance", "optimization", "metrics", "speed"]
+
+    accessibility:
+      file: "best-practices/accessibility.md"
+      summary: "Accessibility guidelines, WCAG 2.1 AA, ARIA, screen readers"
+      estimated_tokens: 400
+      official_docs: "https://www.w3.org/WAI/WCAG21/quickref"
+      last_updated: "2025-01-22"
+      tags: ["accessibility", "wcag", "a11y", "inclusive"]
+
+    testing:
+      file: "best-practices/testing.md"
+      summary: "Testing strategies, unit/integration/e2e, coverage, TDD"
+      estimated_tokens: 400
+      official_docs: null
+      last_updated: "2025-01-22"
+      tags: ["testing", "quality", "tdd", "coverage"]
+
+    code-quality:
+      file: "best-practices/code-quality.md"
+      summary: "Code quality standards, linting, formatting, code review"
+      estimated_tokens: 350
+      official_docs: null
+      last_updated: "2025-01-22"
+      tags: ["quality", "standards", "linting", "formatting"]
+
+    database:
+      file: "best-practices/database.md"
+      summary: "Database design, normalization, indexing, query optimization"
+      estimated_tokens: 450
+      official_docs: null
+      last_updated: "2025-01-22"
+      tags: ["database", "design", "optimization", "indexing"]
+
+# Search Optimization
+search_index:
+  by_tag:
+    framework: ["nextjs", "react", "typescript"]
+    ui: ["shadcn-ui", "react"]
+    database: ["prisma", "drizzle", "database"]
+    payment: ["stripe"]
+    auth: ["nextauth", "rbac"]
+    security: ["security", "rbac", "nextauth", "api-first-architecture"]
+    testing: ["playwright", "vitest", "testing"]
+    deployment: ["docker", "kubernetes", "vercel", "github-actions"]
+    performance: ["performance", "caching"]
+    api: ["api-first-architecture", "api-routes"]
+
+  by_use_case:
+    "implementing authentication": ["nextauth", "rbac", "security", "middleware"]
+    "building forms": ["server-actions", "zod"]
+    "payment integration": ["stripe", "api-routes", "error-handling"]
+    "database queries": ["prisma", "drizzle", "database"]
+    "UI components": ["shadcn-ui", "react", "accessibility"]
+    "multi-tenant app": ["multi-tenant", "rbac", "middleware"]
+    "API endpoints": ["api-routes", "server-actions", "error-handling", "api-first-architecture"]
+    "external API": ["api-first-architecture", "api-routes", "security"]
+    "testing": ["playwright", "vitest", "testing"]
+    "deployment": ["docker", "kubernetes", "vercel", "github-actions"]
+
+# Loading Strategy
+loading:
+  tier: 3A  # Index (Tier 3A) → Individual skill (Tier 3B)
+  index_tokens: 800
+  average_skill_tokens: 400
+
+  strategy:
+    step_1: "Load index.yaml (800 tokens) for skill discovery"
+    step_2: "Search index by name, tag, or use case"
+    step_3: "Load only matched skill file (200-500 tokens)"
+    step_4: "Cache skill for session duration"
+
+  efficiency:
+    before: "Load all skills → ~10,000 tokens"
+    after: "Load index + specific skill → ~1,200 tokens"
+    savings: "88% reduction"
+
+# Freshness Rules
+freshness:
+  check_if_older_than: "30 days"
+  auto_update_triggers:
+    - "Framework version update detected"
+    - "Official docs URL returns 404"
+    - "Agent encounters outdated pattern"
+    - "Error in code example"
+
+  update_priority:
+    critical: ["nextjs", "stripe", "security"]  # Check weekly
+    high: ["react", "prisma", "shadcn-ui"]      # Check bi-weekly
+    medium: ["other libraries and tools"]        # Check monthly
+    low: ["patterns", "best-practices"]          # Check quarterly
+
+# Usage Metrics (to be tracked)
+metrics:
+  total_skills: 28
+  total_categories: 5
+  average_tokens_per_skill: 400
+  index_size_tokens: 850
+
+  target_metrics:
+    skill_hit_rate: ">80%"  # How often skills exist vs need to create
+    update_frequency: "<30 days average age"
+    load_efficiency: ">85%"  # Tokens used vs loaded

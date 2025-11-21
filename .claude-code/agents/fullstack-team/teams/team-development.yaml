@@ -1,0 +1,21 @@
+# Development Team Bundle Configuration
+
+bundle:
+  name: Development Team
+  icon: 💻
+  description: |
+    Core development team for implementation.
+    Includes frontend, backend, database, and testing.
+
+agents:
+  - orchestrator
+  - frontend
+  - backend
+  - database
+  - qa
+
+use_when:
+  - "Implementing features"
+  - "Building UI components"
+  - "Creating APIs"
+  - "Writing tests"

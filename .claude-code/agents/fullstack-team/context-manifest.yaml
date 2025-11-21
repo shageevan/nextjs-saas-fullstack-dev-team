@@ -1,0 +1,569 @@
+# Context Loading Manifest
+# Defines when and how to load agent context for maximum efficiency
+
+manifest:
+  version: "1.0.0"
+  optimization_target: "3,500 tokens per typical interaction (72% reduction from baseline)"
+  baseline_tokens: 12,300
+  optimized_tokens: 3,500
+
+  loading_strategy:
+    on_conversation_start:
+      description: "Initial conversation start - load orchestrator only"
+      load:
+        - "orchestrator/core.yaml"
+      estimated_tokens: 500
+      rationale: "User hasn't specified task yet, only need orchestrator to coordinate"
+
+    on_orchestrator_active:
+      description: "Orchestrator analyzing requirements and coordinating"
+      load:
+        - "orchestrator/core.yaml"
+        - "orchestrator/operations.yaml"
+      pre_fetch:
+        - "resource-verifier/core.yaml"
+      estimated_tokens: 1,300
+      rationale: "Orchestrator needs operations to coordinate, likely needs resource verifier first"
+
+    on_prerequisites_check:
+      description: "Resource Verifier checking prerequisites"
+      load:
+        - "orchestrator/core.yaml"
+        - "resource-verifier/core.yaml"
+        - "resource-verifier/operations.yaml"
+      estimated_tokens: 1,200
+      rationale: "Need resource verifier to check MCP servers, env vars, etc."
+
+    on_planning_phase:
+      description: "Planning team working on PRD, architecture, design"
+      load:
+        - "orchestrator/core.yaml"
+        - "orchestrator/operations.yaml"
+        - "pm/core.yaml"
+        - "architect/core.yaml"
+        - "database/core.yaml"
+        - "security/core.yaml"
+      estimated_tokens: 3,000
+      rationale: "Planning agents need core definitions to collaborate"
+
+    on_implementation_phase:
+      description: "Development team building the application"
+      load:
+        - "orchestrator/core.yaml"
+        - "backend/core.yaml"
+        - "backend/operations.yaml"
+        - "frontend/core.yaml"
+        - "frontend/operations.yaml"
+        - "database/core.yaml"
+      pre_fetch:
+        - "security/core.yaml"
+        - "payment/core.yaml"
+      estimated_tokens: 3,200
+      rationale: "Developers need full operations, likely need security/payment for auth/billing"
+
+    on_agent_handoff:
+      description: "One agent hands off to another"
+      load:
+        - "orchestrator/core.yaml"
+        - "[source-agent]/core.yaml"
+        - "[target-agent]/core.yaml"
+        - "[target-agent]/operations.yaml"
+      estimated_tokens: 1,500
+      rationale: "Need source agent context, target agent full context"
+
+    on_example_needed:
+      description: "Agent needs detailed example or pattern"
+      load:
+        - "[agent]/examples/[pattern].md"
+      estimated_tokens: 200
+      rationale: "Load specific example only when referenced"
+
+  tier_definitions:
+    tier_1_core:
+      description: "Always loaded when agent is active"
+      includes:
+        - metadata
+        - persona
+        - role_boundaries
+        - critical_actions
+      estimated_tokens: 400-500
+      file_pattern: "[agent]/core.yaml"
+
+    tier_2_operations:
+      description: "Loaded when agent is performing work"
+      includes:
+        - coordination_phases
+        - best_practices_summary
+        - patterns_summary
+        - collaboration_info
+      estimated_tokens: 300-400
+      file_pattern: "[agent]/operations.yaml"
+
+    tier_3_reference:
+      description: "Loaded only when explicitly referenced"
+      includes:
+        - detailed_examples
+        - complete_patterns
+        - code_snippets
+        - troubleshooting_guides
+      estimated_tokens: 100-300
+      file_pattern: "[agent]/examples/*.md"
+
+  agent_loading_rules:
+    orchestrator:
+      always_load: ["core.yaml"]
+      load_when_active: ["operations.yaml"]
+      pre_fetch_with: ["resource-verifier"]
+      estimated_tokens_core: 500
+      estimated_tokens_operations: 800
+
+    resource-verifier:
+      always_load: []
+      load_when_active: ["core.yaml", "operations.yaml"]
+      pre_fetch_with: ["devops", "database", "security"]
+      estimated_tokens_core: 400
+      estimated_tokens_operations: 500
+
+    pm:
+      always_load: []
+      load_when_active: ["core.yaml"]
+      load_if_needed: ["operations.yaml"]
+      pre_fetch_with: ["architect", "designer"]
+      estimated_tokens_core: 300
+      estimated_tokens_operations: 200
+
+    architect:
+      always_load: []
+      load_when_active: ["core.yaml", "operations.yaml"]
+      pre_fetch_with: ["database", "backend", "frontend"]
+      estimated_tokens_core: 400
+      estimated_tokens_operations: 300
+
+    frontend:
+      always_load: []
+      load_when_active: ["core.yaml", "operations.yaml"]
+      pre_fetch_with: ["backend", "designer"]
+      estimated_tokens_core: 400
+      estimated_tokens_operations: 400
+      examples:
+        - "shadcn-components.md"
+        - "server-components.md"
+
+    backend:
+      always_load: []
+      load_when_active: ["core.yaml", "operations.yaml"]
+      pre_fetch_with: ["database", "security", "payment"]
+      estimated_tokens_core: 400
+      estimated_tokens_operations: 400
+      examples:
+        - "server-actions.md"
+        - "api-routes.md"
+        - "webhooks.md"
+
+    database:
+      always_load: []
+      load_when_active: ["core.yaml", "operations.yaml"]
+      pre_fetch_with: ["backend"]
+      estimated_tokens_core: 450
+      estimated_tokens_operations: 400
+      examples:
+        - "multi-tenant-schemas.md"
+        - "query-optimization.md"
+
+    security:
+      always_load: []
+      load_when_active: ["core.yaml"]
+      load_if_needed: ["operations.yaml"]
+      pre_fetch_with: ["backend"]
+      estimated_tokens_core: 400
+      estimated_tokens_operations: 350
+
+    payment:
+      always_load: []
+      load_when_active: ["core.yaml"]
+      load_if_needed: ["operations.yaml"]
+      pre_fetch_with: ["backend", "security"]
+      estimated_tokens_core: 400
+      estimated_tokens_operations: 350
+
+    devops:
+      always_load: []
+      load_when_active: ["core.yaml", "operations.yaml"]
+      pre_fetch_with: []
+      estimated_tokens_core: 400
+      estimated_tokens_operations: 400
+
+    qa:
+      always_load: []
+      load_when_active: ["core.yaml", "operations.yaml"]
+      pre_fetch_with: []
+      estimated_tokens_core: 400
+      estimated_tokens_operations: 350
+
+    designer:
+      always_load: []
+      load_when_active: ["core.yaml"]
+      load_if_needed: ["operations.yaml"]
+      pre_fetch_with: ["frontend"]
+      estimated_tokens_core: 400
+      estimated_tokens_operations: 300
+
+  documentation_loading:
+    core_docs:
+      description: "Load first - essential concepts only"
+      files:
+        - "docs/core/QUICKSTART.md"
+        - "docs/core/ROLE-BOUNDARIES-CORE.md"
+        - "docs/core/PARALLEL-CORE.md"
+      estimated_tokens: 800
+      load_when: "conversation_start"
+
+    reference_docs:
+      description: "Load on-demand - detailed guides"
+      files:
+        - "docs/reference/AGENTS-DETAILED.md"
+        - "docs/reference/ROLE-BOUNDARIES-EXAMPLES.md"
+        - "docs/reference/PARALLEL-EXAMPLES.md"
+      estimated_tokens: 1,500
+      load_when: "explicitly_referenced"
+
+  caching_strategy:
+    cacheable:
+      description: "Content that rarely changes - cache across conversations"
+      items:
+        - "All [agent]/core.yaml files"
+        - "docs/core/* files"
+        - "Pattern templates"
+      benefit: "50-90% cost reduction on cached content with LLM prompt caching"
+
+    non_cacheable:
+      description: "User-specific or dynamic content"
+      items:
+        - "User conversation history"
+        - "Project-specific files"
+        - "Generated code"
+      rationale: "Changes per conversation"
+
+  eviction_rules:
+    remove_after_handoff_complete:
+      - "[source-agent]/operations.yaml"
+      - "[source-agent]/examples/*"
+
+    keep_always:
+      - "orchestrator/core.yaml"
+
+    remove_after_use:
+      - "[agent]/examples/*.md"
+
+    compress_after_n_turns:
+      threshold: 10
+      compress_to: "summary"
+      example: "Full context: 800 tokens → Summary: 100 tokens"
+
+  compression_techniques:
+    reference_pointers:
+      before_size: 50
+      after_size: 3
+      reduction: "94%"
+      example: "Full code example → '@reference backend/examples/server-actions.md'"
+
+    summary_plus_details:
+      before_size: 200
+      after_size: 30
+      reduction: "85%"
+      example: "Detailed practices list → 'Summary + @reference for details'"
+
+    pattern_templates:
+      before_size: 100
+      after_size: 20
+      reduction: "80%"
+      example: "Full code → Template with placeholders"
+
+  success_metrics:
+    target_reduction: "70%"
+    target_efficiency: "90%"
+    target_tokens_per_interaction: 4000
+    target_latency_increase: "<200ms"
+    target_cost_savings: "50%"
+
+  monitoring:
+    track_per_interaction:
+      - tokens_loaded
+      - tokens_used
+      - efficiency_percentage
+      - agents_active
+      - context_wasted
+      - load_time_ms
+
+    alert_thresholds:
+      tokens_loaded_exceeds: 5000
+      efficiency_below: 80
+      context_wasted_exceeds: 25
+
+  migration_plan:
+    phase_1:
+      description: "Restructure high-impact agents"
+      agents: ["orchestrator", "backend", "frontend", "database"]
+      estimated_effort: "1 week"
+      expected_reduction: "50%"
+
+    phase_2:
+      description: "Restructure remaining agents"
+      agents: ["security", "payment", "devops", "qa", "designer", "pm", "architect", "resource-verifier"]
+      estimated_effort: "1 week"
+      expected_reduction: "65%"
+
+    phase_3:
+      description: "Optimize documentation"
+      tasks:
+        - "Split docs into core/ and reference/"
+        - "Add context metadata"
+        - "Create loading rules"
+      estimated_effort: "3 days"
+      expected_reduction: "70%"
+
+    phase_4:
+      description: "Testing and refinement"
+      tasks:
+        - "Test with real scenarios"
+        - "Measure actual token reduction"
+        - "Optimize based on usage patterns"
+      estimated_effort: "1 week"
+      target_reduction: "72%"
+
+  # Skills Knowledge Base Loading
+  skills_loading:
+    tier: 3  # Reference content (Tier 3A = index, Tier 3B = individual skill)
+
+    strategy:
+      description: "Two-tier loading: index first, then specific skills"
+      step_1:
+        action: "Load skills/index.yaml"
+        estimated_tokens: 800
+        when: "skill_search_initiated"
+
+      step_2:
+        action: "Search index by name, tag, or use case"
+        cost: "0 tokens (search only)"
+
+      step_3:
+        action: "Load matched skill file"
+        estimated_tokens: 200-500
+        when: "skill_identified"
+
+      step_4:
+        action: "Cache skill for session"
+        benefit: "No reload on subsequent references"
+
+    efficiency:
+      before_skills: "Search internet each time → 0 tokens but slow"
+      after_skills_naive: "Load all 27 skills → ~10,800 tokens"
+      after_skills_optimized: "Load index + specific skill → ~1,200 tokens"
+      savings: "89% token reduction vs loading all skills"
+      speed_improvement: "90% faster than internet search"
+
+    loading_rules:
+      # Always load index when agent needs knowledge
+      on_knowledge_needed:
+        load:
+          - "skills/index.yaml"
+        estimated_tokens: 800
+        rationale: "Quick skill discovery without loading all skills"
+
+      # Load specific skill after identifying from index
+      on_skill_identified:
+        load:
+          - "skills/[category]/[skill].md"
+        estimated_tokens: 400
+        cache_duration: "session"
+        rationale: "Load only needed skill, cache for reuse"
+
+      # When agent needs to create new skill
+      on_skill_creation:
+        workflow:
+          - "Search internet for official docs"
+          - "Extract and structure knowledge"
+          - "Create skill file using SKILL-TEMPLATE.md"
+          - "Update skills/index.yaml with new entry"
+        estimated_tokens_created: 400
+        estimated_tokens_saved_future: "400 per reuse"
+
+      # When agent needs to update skill
+      on_skill_update:
+        condition: "Skill >30 days old OR outdated information found"
+        workflow:
+          - "Search for updated information"
+          - "Compare with existing content"
+          - "Update skill file"
+          - "Update 'Last Updated' and 'Updates Log'"
+        estimated_tokens: 400
+
+    agent_workflow:
+      step_1_check_skills:
+        description: "Agent checks skills folder BEFORE searching internet"
+        load: "skills/index.yaml"
+        tokens: 800
+
+      step_2_search_index:
+        description: "Search index by skill name, tag, or use case"
+        tokens: 0
+
+      step_3a_found:
+        description: "If skill found: Load specific skill"
+        load: "skills/[category]/[skill].md"
+        tokens: 400
+        action: "Use knowledge to implement"
+
+      step_3b_not_found:
+        description: "If skill NOT found: Create new skill"
+        workflow:
+          - "Search internet (official docs priority)"
+          - "Structure knowledge using SKILL-TEMPLATE.md"
+          - "Save to skills/[category]/[skill].md"
+          - "Update skills/index.yaml"
+          - "Use knowledge to implement"
+        tokens_created: 400
+        future_savings: "400 tokens per reuse + faster access"
+
+      step_4_update_if_old:
+        description: "If skill >30 days old: Consider updating"
+        condition: "last_updated > 30 days"
+        action: "Search for updates, refresh skill if needed"
+
+    skill_categories:
+      frameworks:
+        examples: ["nextjs", "react", "typescript"]
+        typical_tokens: 400
+        update_frequency: "high (check monthly)"
+
+      libraries:
+        examples: ["shadcn-ui", "prisma", "stripe", "zod"]
+        typical_tokens: 400
+        update_frequency: "medium (check quarterly)"
+
+      patterns:
+        examples: ["server-actions", "multi-tenant", "rbac"]
+        typical_tokens: 400
+        update_frequency: "low (check semi-annually)"
+
+      tools:
+        examples: ["docker", "kubernetes", "playwright"]
+        typical_tokens: 400
+        update_frequency: "medium (check quarterly)"
+
+      best-practices:
+        examples: ["security", "performance", "accessibility"]
+        typical_tokens: 450
+        update_frequency: "high (check monthly)"
+
+    search_optimization:
+      by_name:
+        example: "Agent searches for 'server-actions'"
+        process: "Direct match in index → Load skill"
+        tokens: 1,200
+
+      by_tag:
+        example: "Agent searches for 'authentication' tag"
+        process: "Index returns [nextauth, rbac, security] → Agent picks → Load skill"
+        tokens: 1,200
+
+      by_use_case:
+        example: "Agent needs 'implementing authentication'"
+        process: "Index returns recommended skills → Load relevant ones"
+        tokens: 1,600
+
+    roi_analysis:
+      scenario_1_with_skills:
+        task: "Implement authentication 5 times in different projects"
+        without_skills:
+          internet_searches: 5
+          time_per_search: "2-5 minutes"
+          total_time: "10-25 minutes"
+          tokens: 0
+        with_skills:
+          first_time:
+            - "Create skill: Search internet (2 min) + Structure (1 min)"
+            - "Tokens: 400 (skill creation)"
+          subsequent_4_times:
+            - "Load skill: Instant"
+            - "Tokens: 400 each = 1,600"
+          total_time: "3 minutes (vs 10-25 min)"
+          total_tokens: 2,000
+          time_saved: "70-88%"
+
+      scenario_2_team_learning:
+        description: "Skills accumulate across all agents"
+        month_1:
+          skills_created: 10
+          tokens_invested: 4,000
+        month_6:
+          skills_accumulated: 60
+          reuse_rate: "5x per skill average"
+          time_saved: "~20 hours of internet searching"
+          knowledge_quality: "Curated, consistent patterns"
+
+    quality_standards:
+      official_docs_priority:
+        priority_1: "Official documentation (nextjs.org, stripe.com/docs)"
+        priority_2: "Official GitHub repositories"
+        priority_3: "High-quality community content (secondary)"
+
+      skill_structure:
+        required_sections:
+          - "Quick Reference (50 tokens)"
+          - "Overview (100 tokens)"
+          - "Key Concepts (100 tokens)"
+          - "Common Patterns (150 tokens)"
+          - "Best Practices (50 tokens)"
+          - "Troubleshooting (50 tokens)"
+        target_total: "400 tokens per skill"
+
+      freshness:
+        critical_skills: "Update every 30 days (frameworks, security)"
+        standard_skills: "Update every 90 days (libraries, tools)"
+        stable_skills: "Update every 180 days (patterns, best practices)"
+
+    integration_with_agents:
+      backend_developer:
+        common_skills:
+          - "patterns/server-actions"
+          - "libraries/prisma"
+          - "libraries/zod"
+          - "patterns/api-routes"
+        workflow: "Check skills → Load needed → Implement"
+
+      frontend_developer:
+        common_skills:
+          - "libraries/shadcn-ui"
+          - "frameworks/react"
+          - "frameworks/nextjs"
+          - "best-practices/accessibility"
+        workflow: "Check skills → Load needed → Build UI"
+
+      security_expert:
+        common_skills:
+          - "best-practices/security"
+          - "patterns/rbac"
+          - "libraries/nextauth"
+        workflow: "Check skills → Audit against standards"
+
+    benefits:
+      context_efficiency:
+        description: "Only load needed skills"
+        savings: "89% vs loading all skills"
+
+      speed:
+        description: "Local skills vs internet search"
+        improvement: "90% faster knowledge access"
+
+      consistency:
+        description: "Curated patterns across team"
+        benefit: "Same patterns used by all agents"
+
+      accumulation:
+        description: "Knowledge compounds over time"
+        benefit: "Team gets smarter with every task"
+
+      offline_capable:
+        description: "Works without internet access"
+        benefit: "No external dependencies for known patterns"

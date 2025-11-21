@@ -1,0 +1,23 @@
+# Planning Team Bundle Configuration
+
+bundle:
+  name: Planning & Architecture Team
+  icon: 📋
+  description: |
+    Team focused on requirements gathering, architecture design, and planning.
+    Use this team for initial project planning and design phase.
+
+agents:
+  - orchestrator
+  - resource-verifier
+  - pm
+  - architect
+  - designer
+  - security
+  - database
+
+use_when:
+  - "Starting a new project"
+  - "Planning a major feature"
+  - "Architectural design needed"
+  - "Requirements gathering"

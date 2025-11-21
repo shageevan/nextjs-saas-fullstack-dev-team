@@ -1,0 +1,23 @@
+# Deployment Team Bundle Configuration
+
+bundle:
+  name: Deployment & Operations Team
+  icon: 🚢
+  description: |
+    Team focused on deployment, infrastructure, security, and monitoring.
+    Use this team for production deployments and operations.
+
+agents:
+  - orchestrator
+  - resource-verifier
+  - devops
+  - security
+  - qa
+  - database
+
+use_when:
+  - "Deploying to production"
+  - "Setting up infrastructure"
+  - "Configuring CI/CD"
+  - "Security audits"
+  - "Database migrations"

@@ -1,0 +1,45 @@
+# Fullstack Team Bundle Configuration
+
+bundle:
+  name: Full Stack Development Team
+  icon: 🚀
+  description: |
+    Complete AI tech team for building Next.js SaaS applications.
+    Includes orchestration, development, security, DevOps, and testing.
+
+agents:
+  # Orchestrator (Entry Point)
+  - orchestrator
+
+  # Prerequisites & Verification
+  - resource-verifier
+
+  # Planning & Design
+  - pm
+  - architect
+  - designer
+
+  # Development
+  - frontend
+  - backend
+  - database
+
+  # Specialized
+  - security
+  - payment
+  - devops
+  - qa
+
+default_workflow:
+  entry_point: orchestrator
+  description: "Start with Orchestrator to analyze requirements and coordinate the team"
+
+tech_stack:
+  framework: "Next.js 15+ (App Router)"
+  ui: "Shadcn UI + Tailwind CSS"
+  database: "PostgreSQL + Prisma/Drizzle"
+  cache: "Redis"
+  auth: "NextAuth.js / Clerk / Auth.js"
+  payments: "Stripe"
+  testing: "Vitest + Playwright"
+  deployment: "Vercel / Docker + Kubernetes"
