@@ -2,8 +2,8 @@
 # This index allows fast skill discovery without loading full skill content
 # Estimated tokens: ~800 (much smaller than loading all skills)
 
-version: "1.0.0"
-last_updated: "2025-01-22"
+version: "1.1.0"
+last_updated: "2025-11-22"
 
 # Index Structure:
 # - Load this index first for skill discovery
@@ -102,13 +102,13 @@ skills:
       last_updated: "2025-01-22"
       tags: ["nextjs", "mutations", "forms", "server"]
 
-    multi-tenant:
-      file: "patterns/multi-tenant.md"
-      summary: "Multi-tenant architecture, row-level security, tenant isolation"
-      estimated_tokens: 450
+    multi-tenant-membership:
+      file: "patterns/multi-tenant-membership.md"
+      summary: "Cross-tenant user membership, invitations, tenant switching, role-per-tenant, database-per-tenant support"
+      estimated_tokens: 600
       official_docs: null
-      last_updated: "2025-01-22"
-      tags: ["architecture", "saas", "isolation", "security"]
+      last_updated: "2025-11-22"
+      tags: ["multi-tenant", "saas", "membership", "invitations", "tenant-switching", "cross-tenant"]
 
     rbac:
       file: "patterns/rbac.md"
@@ -316,7 +316,11 @@ search_index:
     "database queries": ["postgresql", "prisma", "drizzle", "database"]
     "database setup": ["postgresql", "prisma", "drizzle"]
     "UI components": ["shadcn-ui", "react", "accessibility"]
-    "multi-tenant app": ["multi-tenant", "postgresql", "rbac", "middleware"]
+    "multi-tenant app": ["multi-tenant-membership", "postgresql", "rbac", "middleware"]
+    "user invitations": ["multi-tenant-membership", "server-actions", "nextauth"]
+    "tenant switching": ["multi-tenant-membership", "middleware", "server-actions"]
+    "cross-tenant membership": ["multi-tenant-membership", "rbac", "postgresql"]
+    "invite users": ["multi-tenant-membership", "server-actions"]
     "API endpoints": ["api-routes", "server-actions", "error-handling", "api-first-architecture"]
     "external API": ["api-first-architecture", "api-routes", "security"]
     "testing": ["playwright", "vitest", "testing"]
@@ -362,10 +366,10 @@ freshness:
 
 # Usage Metrics (to be tracked)
 metrics:
-  total_skills: 33
+  total_skills: 34
   total_categories: 5
-  average_tokens_per_skill: 400
-  index_size_tokens: 950
+  average_tokens_per_skill: 410
+  index_size_tokens: 1000
   tools_with_mcp: 5  # postgresql, github, docker, stripe-cli, redis
 
   target_metrics:
