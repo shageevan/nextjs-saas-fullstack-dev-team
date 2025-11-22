@@ -1,0 +1,77 @@
+{
+  "description": "Claude Code project settings for fullstack-saas",
+  "project": {
+    "name": "Fullstack SaaS",
+    "type": "Next.js SaaS Application",
+    "agents_module": "fullstack-team"
+  },
+  "agents": {
+    "enabled": true,
+    "module_path": ".claude/agents",
+    "custom_modules": {
+      "fullstack-team": {
+        "orchestrator": "orchestrator.md",
+        "specialists": [
+          "pm.md",
+          "architect.md",
+          "frontend.md",
+          "backend.md",
+          "database.md",
+          "security.md",
+          "payment.md",
+          "devops.md",
+          "qa.md",
+          "designer.md",
+          "resource-verifier.md"
+        ]
+      }
+    }
+  },
+  "workflows": {
+    "enabled": true,
+    "path": ".claude/workflows"
+  },
+  "teams": {
+    "enabled": true,
+    "path": ".claude/teams",
+    "available_teams": [
+      "team-fullstack",
+      "team-planning",
+      "team-development",
+      "team-deployment"
+    ]
+  },
+  "skills": {
+    "enabled": true,
+    "path": ".claude/skills"
+  },
+  "hooks": {
+    "enabled": false,
+    "pre_command": null,
+    "post_command": null
+  },
+  "environment": {
+    "node_version": ">=18.0.0",
+    "package_manager": "npm"
+  },
+  "mcp_servers": {
+    "required": [
+      "@modelcontextprotocol/server-postgres",
+      "@modelcontextprotocol/server-github",
+      "stripe-mcp-server"
+    ],
+    "optional": [
+      "@modelcontextprotocol/server-docker",
+      "redis-mcp-server"
+    ]
+  },
+  "tech_stack": {
+    "framework": "Next.js 15+",
+    "ui": "Shadcn UI + Tailwind CSS",
+    "database": "PostgreSQL",
+    "orm": "Prisma",
+    "cache": "Redis",
+    "auth": "NextAuth.js",
+    "payments": "Stripe"
+  }
+}
