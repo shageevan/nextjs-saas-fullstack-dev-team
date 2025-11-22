@@ -220,6 +220,15 @@ skills:
       last_updated: "2025-01-22"
       tags: ["testing", "e2e", "automation", "playwright"]
 
+    postmark:
+      file: "tools/postmark.md"
+      summary: "Postmark transactional email, templates, multi-tenant from addresses, webhooks, tracking"
+      estimated_tokens: 500
+      official_docs: "https://postmarkapp.com/developer"
+      mcp_server: "postmark-mcp"
+      last_updated: "2025-11-22"
+      tags: ["email", "transactional", "notifications", "postmark", "webhooks"]
+
     kubernetes:
       file: "tools/kubernetes.md"
       summary: "Kubernetes orchestration, deployments, services, scaling"
@@ -316,6 +325,7 @@ search_index:
     api: ["api-first-architecture", "api-routes"]
     git: ["github"]
     caching: ["redis", "caching"]
+    email: ["postmark"]
 
   by_use_case:
     "implementing authentication": ["nextauth", "rbac", "security", "middleware"]
@@ -328,10 +338,14 @@ search_index:
     "raw sql": ["kysely", "postgresql"]
     "UI components": ["shadcn-ui", "react", "accessibility"]
     "multi-tenant app": ["multi-tenant-membership", "postgresql", "rbac", "middleware"]
-    "user invitations": ["multi-tenant-membership", "server-actions", "nextauth"]
+    "user invitations": ["multi-tenant-membership", "server-actions", "nextauth", "postmark"]
     "tenant switching": ["multi-tenant-membership", "middleware", "server-actions"]
     "cross-tenant membership": ["multi-tenant-membership", "rbac", "postgresql"]
-    "invite users": ["multi-tenant-membership", "server-actions"]
+    "invite users": ["multi-tenant-membership", "server-actions", "postmark"]
+    "sending emails": ["postmark", "server-actions"]
+    "transactional emails": ["postmark"]
+    "email notifications": ["postmark", "server-actions"]
+    "password reset": ["postmark", "nextauth", "server-actions"]
     "API endpoints": ["api-routes", "server-actions", "error-handling", "api-first-architecture"]
     "external API": ["api-first-architecture", "api-routes", "security"]
     "testing": ["playwright", "vitest", "testing"]
@@ -377,11 +391,11 @@ freshness:
 
 # Usage Metrics (to be tracked)
 metrics:
-  total_skills: 35
+  total_skills: 36
   total_categories: 5
-  average_tokens_per_skill: 420
-  index_size_tokens: 1050
-  tools_with_mcp: 5  # postgresql, github, docker, stripe-cli, redis
+  average_tokens_per_skill: 425
+  index_size_tokens: 1100
+  tools_with_mcp: 6  # postgresql, github, docker, stripe-cli, redis, postmark
 
   target_metrics:
     skill_hit_rate: ">80%"  # How often skills exist vs need to create

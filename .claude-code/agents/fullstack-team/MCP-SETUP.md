@@ -206,6 +206,50 @@ These servers enhance development workflow:
 
 ---
 
+### 6. Postmark Server
+
+**Package:** `postmark-mcp`
+**Repository:** https://github.com/ActiveCampaign/postmark-mcp
+**Purpose:** Transactional email operations, delivery tracking
+**Skills:** `tools/postmark.md`
+
+```json
+{
+  "mcpServers": {
+    "postmark": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "postmark-mcp"
+      ],
+      "env": {
+        "POSTMARK_API_TOKEN": "<your-postmark-server-token>"
+      }
+    }
+  }
+}
+```
+
+**API Token:** Get from Postmark dashboard → Servers → API Tokens
+
+**Features:**
+- Send transactional emails
+- Check email delivery status
+- View bounce and spam reports
+- Test email templates
+- Monitor email analytics
+- Track opens and clicks
+
+**Common Operations:**
+```
+"Send a password reset email to user@example.com"
+"Check delivery status for message ID abc123"
+"Show bounce statistics for last 7 days"
+"Test the welcome-email template"
+```
+
+---
+
 ## Optional MCP Servers
 
 Enhance team capabilities based on deployment platform:
@@ -300,6 +344,13 @@ Enhance team capabilities based on deployment platform:
       "env": {
         "REDIS_URL": "${REDIS_URL}"
       }
+    },
+    "postmark": {
+      "command": "npx",
+      "args": ["-y", "postmark-mcp"],
+      "env": {
+        "POSTMARK_API_TOKEN": "${POSTMARK_API_TOKEN}"
+      }
     }
   }
 }
@@ -319,6 +370,9 @@ STRIPE_API_KEY=sk_test_xxxxxxxxxxxxxxxxxxxxx
 
 # Redis
 REDIS_URL=redis://localhost:6379
+
+# Postmark
+POSTMARK_API_TOKEN=your-postmark-server-token
 ```
 
 **Important:** Add `.env.local` to `.gitignore` to prevent committing secrets!

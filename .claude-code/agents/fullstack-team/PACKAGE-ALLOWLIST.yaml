@@ -178,6 +178,7 @@ auto_approved_packages:
 
   # Email
   email:
+    - "postmark"
     - "nodemailer"
     - "@sendgrid/mail"
     - "resend"
