@@ -47,19 +47,27 @@ skills:
 
     prisma:
       file: "libraries/prisma.md"
-      summary: "Prisma ORM, schema design, queries, migrations, relations"
-      estimated_tokens: 450
+      summary: "Prisma ORM, schema-first, excellent DX, migrations, Prisma Studio, multi-tenant patterns"
+      estimated_tokens: 500
       official_docs: "https://www.prisma.io/docs"
-      last_updated: "2025-01-22"
-      tags: ["orm", "database", "migrations", "queries"]
+      last_updated: "2025-11-22"
+      tags: ["orm", "database", "migrations", "queries", "type-safe"]
 
     drizzle:
       file: "libraries/drizzle.md"
-      summary: "Drizzle ORM, type-safe queries, migrations, performance"
-      estimated_tokens: 400
+      summary: "Drizzle ORM, SQL-like syntax, lightweight, multi-tenant queries"
+      estimated_tokens: 450
       official_docs: "https://orm.drizzle.team/docs"
-      last_updated: "2025-01-22"
-      tags: ["orm", "database", "type-safe", "performance"]
+      last_updated: "2025-11-22"
+      tags: ["orm", "database", "type-safe", "performance", "sql"]
+
+    kysely:
+      file: "libraries/kysely.md"
+      summary: "Kysely query builder, type-safe raw SQL, zero overhead, maximum control"
+      estimated_tokens: 450
+      official_docs: "https://kysely.dev"
+      last_updated: "2025-11-22"
+      tags: ["query-builder", "database", "sql", "type-safe", "performance"]
 
     stripe:
       file: "libraries/stripe.md"
@@ -313,8 +321,11 @@ search_index:
     "implementing authentication": ["nextauth", "rbac", "security", "middleware"]
     "building forms": ["server-actions", "zod"]
     "payment integration": ["stripe", "stripe-cli", "api-routes", "error-handling"]
-    "database queries": ["postgresql", "prisma", "drizzle", "database"]
-    "database setup": ["postgresql", "prisma", "drizzle"]
+    "database queries": ["postgresql", "prisma", "drizzle", "kysely", "database"]
+    "database setup": ["postgresql", "prisma", "drizzle", "kysely"]
+    "choosing orm": ["prisma", "drizzle", "kysely"]
+    "type-safe sql": ["kysely", "drizzle", "prisma"]
+    "raw sql": ["kysely", "postgresql"]
     "UI components": ["shadcn-ui", "react", "accessibility"]
     "multi-tenant app": ["multi-tenant-membership", "postgresql", "rbac", "middleware"]
     "user invitations": ["multi-tenant-membership", "server-actions", "nextauth"]
@@ -366,10 +377,10 @@ freshness:
 
 # Usage Metrics (to be tracked)
 metrics:
-  total_skills: 34
+  total_skills: 35
   total_categories: 5
-  average_tokens_per_skill: 410
-  index_size_tokens: 1000
+  average_tokens_per_skill: 420
+  index_size_tokens: 1050
   tools_with_mcp: 5  # postgresql, github, docker, stripe-cli, redis
 
   target_metrics:
